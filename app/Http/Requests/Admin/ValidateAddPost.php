@@ -27,21 +27,51 @@ class ValidateAddPost extends FormRequest
      */
     public function rules()
     {
-        return [
-            "name"=>"required|min:3|max:250",
-            "slug"=>[
-                "required",
-                Rule::unique("App\Models\Post", 'slug')->where(function ($query) {
-                    return $query->where('deleted_at', null);
-                })
-            ],
+
+        $rule=[
+            "order"=>"nullable|numeric",
+            "avatar_path"=>"mimes:jpeg,jpg,png,svg|nullable|file|max:3000",
             "view"=>"nullable|integer",
             "hot"=>"nullable|integer",
-            "avatar"=>"mimes:jpeg,jpg,png,svg|nullable",
             "category_id"=>'exists:App\Models\CategoryPost,id',
             "active"=>"required",
-            "checkrobot"=>"accepted"
         ];
+        $langConfig=config('languages.supported');
+        $langDefault=config('languages.default');
+
+        foreach ($langConfig as $key => $value) {
+            $arrConlai=$langConfig;
+            unset($arrConlai[$key]);
+            $keyConlai = array_keys($arrConlai);
+            $keyConlai= collect($keyConlai);
+
+            $stringKey = $keyConlai->map(function ($item, $key) {
+                return "slug_".$item;
+            });
+            $stringKey= $stringKey->implode(', ');
+           // dd($stringKey);
+            // $leng=count($keyConlai);
+
+            // array_map(function($k,$i){
+            //     dd($i);
+            // },$keyConlai);
+            // dd($leng);
+            // $defirent=implode("name_",$keyConlai);
+            // dd($defirent);
+
+            $rule['name_'.$key]="required|min:3|max:250";
+            $rule['slug_'.$key]=[
+                "required",
+                'different:'.$stringKey,
+                Rule::unique("App\Models\PostTranslation", 'slug'),
+            ];
+            $rule['title_seo_'.$key]="nullable|min:1|max:191";
+            $rule['description_seo_'.$key]="nullable|min:1|max:191";
+            $rule['keyword_seo_'.$key]="nullable|min:1|max:191";
+        }
+        return $rule;
+
+
     }
     public function messages()
     {
@@ -56,7 +86,7 @@ class ValidateAddPost extends FormRequest
             "avatar.mimes"=>"avatar  in jpeg,jpg,png,svg",
             "active.required"=>"active  is required",
             "category_id"=>"category_id k tồn tại",
-            "checkrobot.accepted"=>"checkrobot product is accepted",
+
         ];
     }
 }

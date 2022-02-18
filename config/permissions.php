@@ -63,11 +63,22 @@
             'pay-edit'=>'pay_edit',
             'pay-delete'=>'pay_delete',
             'pay-update-draw-point'=>'pay_update_draw_point',
+            'pay-export-excel'=>'pay_export_excel',
 
             'bank-list'=>'bank_list',
             'bank-add'=>'bank_add',
             'bank-edit'=>'bank_edit',
             'bank-delete'=>'bank_delete',
+
+
+            'store-list'=>'store_list',
+            'store-input'=>'store_input',
+           'store-edit'=>'store_output',
+
+
+           'transaction-list'=>'transaction_list',
+           'transaction-status'=>'transaction_status',
+           'transaction-delete'=>'transaction_delete',
 
         ],
         'table_module'=>[
@@ -89,4 +100,3 @@
             'delete',
         ],
     ];
-?>

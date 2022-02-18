@@ -4,20 +4,64 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Components\Recusive;
-
+use Illuminate\Support\Facades\App;
 class Setting extends Model
 {
     //
     protected $table = "settings";
     protected $guarded = [];
     public $parentId = "parent_id";
-    //  protected $appends = ['breadcrumb'];
+
+    protected $appends = ['breadcrumb','name', 'slug', 'value', 'description', 'language'];
     public function getBreadcrumbAttribute()
     {
         $listIdParent = $this->getALlCategoryPostParent($this->attributes['id']);
-        $allData = $this->select('id', 'name', 'slug')->find($listIdParent)->toArray();
+        $allData = $this->select('id')->find($listIdParent)->toArray();
         return $allData;
     }
+
+
+    // tạo thêm thuộc tính name
+    public function getNameAttribute()
+    {
+        //  dd($this->translationsLanguage()->first()->name);
+        return optional($this->translationsLanguage()->first())->name;
+    }
+    // tạo thêm thuộc tính slug
+    public function getValueAttribute()
+    {
+        return optional($this->translationsLanguage()->first())->value;
+    }
+    // tạo thêm thuộc tính slug
+    public function getSlugAttribute()
+    {
+        return optional($this->translationsLanguage()->first())->slug;
+    }
+    // tạo thêm thuộc tính description
+    public function getDescriptionAttribute()
+    {
+        return optional($this->translationsLanguage()->first())->description;
+    }
+    // tạo thêm thuộc tính content
+    public function getLanguageAttribute()
+    {
+        return optional($this->translationsLanguage()->first())->language;
+    }
+
+    public function translationsLanguage($language = null)
+    {
+        if ($language == null) {
+            $language = App::getLocale();
+        }
+        return $this->hasMany(SettingTranslation::class, "setting_id", "id")->where('language', '=', $language);
+    }
+    public function translations()
+    {
+        return $this->hasMany(SettingTranslation::class, "setting_id", "id");
+    }
+
+
+
     public static function getHtmlOption($parentId = "")
     {
         $data = self::all();
@@ -35,7 +79,6 @@ class Setting extends Model
     // lấy html option có danh mục cha là $Id
     public static function getHtmlOptionAddWithParent($id)
     {
-
         $data = self::all();
         $parentId = $id;
         $rec = new Recusive();

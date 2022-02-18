@@ -29,6 +29,7 @@ class DrawPoint implements Rule
     {
         //
        $user = auth()->guard('web')->user();
+
        return $this->point->sumPointCurrent($user->id)>=(int)$value&&(int)$value>0;
     }
 

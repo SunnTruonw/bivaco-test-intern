@@ -1,25 +1,23 @@
 @extends('admin.layouts.main')
-@section('title',"thêm sản phẩm")
-
+@section('title',"Thêm Sản phẩm")
 @section('css')
 <link href="{{asset('lib/select2/css/select2.min.css')}}" rel="stylesheet" />
 <style>
     .select2-container--default .select2-selection--multiple .select2-selection__choice {
         background-color: #000 !important;
     }
-
     .select2-container .select2-selection--single {
         height: auto;
     }
+    .tinymce_editor_init{
+        height: 300px !important;
+    }
 </style>
+
 @endsection
 @section('content')
-
-
 <div class="content-wrapper">
-
-    @include('admin.partials.content-header',['name'=>"Product","key"=>"Thêm sản phẩm"])
-
+    @include('admin.partials.content-header',['name'=>"Sản phẩm","key"=>"Thêm Sản phẩm"])
     <!-- Main content -->
     <div class="content">
         <div class="container-fluid">
@@ -34,98 +32,343 @@
                         {{session("error")}}
                     </div>
                     @endif
-                    <form action="{{route('admin.product.store')}}" method="POST" enctype="multipart/form-data">
+                    <form class="form-horizontal" action="{{route('admin.product.store')}}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
+                            <div class="col-md-6">
+                                <div class="card-header">
+                                    @foreach ($errors->all() as $message)
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @endforeach
+                                 </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card-tool p-3 text-right">
+                                    <button type="submit" class="btn btn-primary btn-lg">Chấp nhận</button>
+                                    <button type="reset" class="btn btn-danger btn-lg">Làm lại</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+
                             <div class="col-md-8">
                                 <div class="card card-outline card-primary">
                                     <div class="card-header">
-                                       <h3 class="card-title">Thông tin sản phẩm</h3>
+                                       <h3 class="card-title">Thông tin Sản phẩm</h3>
                                     </div>
                                     <div class="card-body table-responsive p-3">
-                                        <div class="form-group">
-                                            <label for="">Mã sản phẩm</label>
-                                            <input type="text" class="form-control
-                                                @error('name') is-invalid @enderror" id="masp" value="{{ old('masp') }}" name="masp" placeholder="Nhập mã sản phẩm" required>
-                                            @error('masp')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="">Tên sản phẩm</label>
-                                            <input type="text" class="form-control
-                                                @error('name') is-invalid @enderror" id="name" value="{{ old('name') }}" name="name" placeholder="Nhập tên sản phẩm">
-                                            @error('name')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="">Slug</label>
-                                            <input type="text" class="form-control
-                                            @error('slug') is-invalid  @enderror" id="slug" value="{{ old('slug') }}" name="slug" placeholder="Nhập slug">
-                                        </div>
-                                        @error('slug')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                        <div class="form-group">
-                                            <label for="">Nhập mô tả</label>
-                                            <textarea class="form-control  @error('description') is-invalid @enderror" name="description" id="" rows="3"  placeholder="Nhập mô tả">{{ old('description') }}</textarea>
-                                        </div>
-                                        @error('description')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                        <div class="form-group">
-                                            <label for="">Nhập content</label>
-                                            <textarea class="form-control tinymce_editor_init @error('content') is-invalid  @enderror" name="content" id="" rows="3" value="" placeholder="Nhập content">
-                                            {{ old('content') }}
-                                            </textarea>
-                                        </div>
-                                        @error('content')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                        <div class="form-group">
-                                            <label for="">Nhập tags</label>
-                                            <select class="form-control tag-select-choose" multiple="multiple" name="tags[]">
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="">Chọn danh muc sản phẩm</label>
-                                            <select class="form-control custom-select select-2-init @error('category_id')
-                                                is-invalid
-                                                @enderror" id="" value="{{ old('category_id') }}" name="category_id">
-                                                {{-- <option value="0">Chọn danh mục cha</option> --}}
-                                                <option value="">--- Chọn danh mục ---</option>
-                                                {!!$option!!}
-                                            </select>
-                                        </div>
-                                        @error('category_id')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                        <div class="form-group">
-                                            <div class="form-check-inline">
-                                                <label class="form-check-label">
-                                                    <input type="radio" class="form-check-input" value="1" name="active" @if(old('active')==="1" ||old('active')===null) {{'checked'}} @endif>Active
-                                                </label>
+										<ul class="nav nav-tabs">
+                                            <li class="nav-item">
+                                              <a class="nav-link active" data-toggle="tab" href="#tong_quan">Tổng quan</a>
+                                            </li>
+                                            <!-- <li class="nav-item">
+                                              <a class="nav-link" data-toggle="tab" href="#du_lieu">Dữ liệu</a>
+                                            </li> -->
+                                            <li class="nav-item">
+                                              <a class="nav-link" data-toggle="tab" href="#hinh_anh">Hình ảnh</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" data-toggle="tab" href="#seo">Seo</a>
+                                            </li>
+                                        </ul>
+
+                                        <div class="tab-content">
+                                            <!-- START Tổng Quan -->
+                                            <div id="tong_quan" class="container tab-pane active "><br>
+
+                                                <ul class="nav nav-tabs">
+                                                    @foreach ($langConfig as $langItem)
+                                                    <li class="nav-item">
+                                                        <a class="nav-link {{$langItem['value']==$langDefault?'active':''}}" data-toggle="tab" href="#tong_quan_{{$langItem['value']}}">{{ $langItem['name'] }}</a>
+                                                    </li>
+                                                    @endforeach
+
+                                                </ul>
+                                                <div class="tab-content">
+                                                    @foreach ($langConfig as $langItem)
+                                                    <div id="tong_quan_{{$langItem['value']}}" class="container wrapChangeSlug tab-pane {{$langItem['value']==$langDefault?'active show':''}} fade">
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <label class="col-sm-2 control-label" for="">Tên Sản phẩm</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control nameChangeSlug
+                                                                    @error('name_'.$langItem['value']) is-invalid @enderror" id="name_{{$langItem['value']}}" value="{{ old('name_'.$langItem['value']) }}" name="name_{{$langItem['value']}}" placeholder="Nhập tên sản phẩm">
+                                                                    @error('name_'.$langItem['value'])
+                                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <label class="col-sm-2 control-label" for="">Slug</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control resultSlug
+                                                                    @error('slug_'.$langItem['value']) is-invalid  @enderror" id="slug_{{ $langItem['value'] }}" value="{{ old('slug_'.$langItem['value']) }}" name="slug_{{ $langItem['value'] }}" placeholder="Nhập slug">
+                                                                    @error('slug_'.$langItem['value'])
+                                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+														<div class="form-group">
+                                                            <div class="row">
+                                                                <label class="col-sm-2 control-label" for="">Giới thiệu</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea class="form-control tinymce_editor_init @error('description_'.$langItem['value']) is-invalid @enderror" name="description_{{$langItem['value']}}" id="" rows="3"  placeholder="Nhập giới thiệu trái">{{ old('description_'.$langItem['value']) }}</textarea>
+                                                                    @error('description_'.$langItem['value'])
+                                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <label class="col-sm-2 control-label" for="">Tình trạng</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control
+                                                                    @error('tinhtrang_'.$langItem['value']) is-invalid @enderror" id="tinhtrang_{{$langItem['value']}}" value="{{ old('tinhtrang_'.$langItem['value']) }}" name="tinhtrang_{{$langItem['value']}}" placeholder="Nhập tình trạng">
+                                                                    @error('tinhtrang_'.$langItem['value'])
+                                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {{--
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <label class="col-sm-2 control-label" for="">Thương hiệu</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control
+                                                                    @error('model_'.$langItem['value']) is-invalid @enderror" id="model_{{$langItem['value']}}" value="{{ old('model_'.$langItem['value']) }}" name="model_{{$langItem['value']}}" placeholder="Nhập thương hiệu">
+                                                                    @error('model_'.$langItem['value'])
+                                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        
+                                                        
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <label class="col-sm-2 control-label" for="">Khuyến mại đặc biệt</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control
+                                                                    @error('baohanh_'.$langItem['value']) is-invalid @enderror" id="baohanh_{{$langItem['value']}}" value="{{ old('baohanh_'.$langItem['value']) }}" name="baohanh_{{$langItem['value']}}" placeholder="Khuyến mại đặc biệt">
+                                                                    @error('baohanh_'.$langItem['value'])
+                                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <label class="col-sm-2 control-label" for="">Phụ kiện tặng kèm</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control
+                                                                    @error('xuatsu_'.$langItem['value']) is-invalid @enderror" id="xuatsu_{{$langItem['value']}}" value="{{ old('xuatsu_'.$langItem['value']) }}" name="xuatsu_{{$langItem['value']}}" placeholder="Nhập phụ kiện tặng kèm">
+                                                                    @error('xuatsu_'.$langItem['value'])
+                                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        
+
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <label class="col-sm-2 control-label" for="">Nhập giới thiệu phải</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea class="form-control tinymce_editor_init @error('content4_'.$langItem['value']) is-invalid @enderror" name="content4_{{$langItem['value']}}" id="" rows="3"  placeholder="Nhập giới thiệu phải">{{ old('content4_'.$langItem['value']) }}</textarea>
+                                                                    @error('content4_'.$langItem['value'])
+                                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <label class="col-sm-2 control-label" for="">Khuyến mại sản phẩm</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea class="form-control tinymce_editor_init @error('content3_'.$langItem['value']) is-invalid  @enderror" name="content3_{{$langItem['value']}}" id="" rows="3" value=""  placeholder="Nhập khuyến mại sản phẩm" >
+                                                                    {{ old('content3_'.$langItem['value']) }}
+                                                                    </textarea>
+                                                                    @error('content3_'.$langItem['value'])
+                                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        --}}
+
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <label class="col-sm-2 control-label" for="">Thông tin chi tiết sản phẩm</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea class="form-control tinymce_editor_init @error('content_'.$langItem['value']) is-invalid  @enderror" name="content_{{$langItem['value']}}" id="" rows="20" value=""  placeholder="Nhập mô tả sản phẩm" >
+                                                                    {{ old('content_'.$langItem['value']) }}
+                                                                    </textarea>
+                                                                    @error('content_'.$langItem['value'])
+                                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {{--
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <label class="col-sm-2 control-label" for="">Chính sách bảo hành</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea class="form-control tinymce_editor_init @error('content2_'.$langItem['value']) is-invalid  @enderror" name="content2_{{$langItem['value']}}" id="" rows="20" value=""  placeholder="Nhập chính sách bảo hành" >
+                                                                    {{ old('content2_'.$langItem['value']) }}
+                                                                    </textarea>
+                                                                    @error('content2_'.$langItem['value'])
+                                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <label class="col-sm-2 control-label" for=""> Nhập chính sách bảo hành</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea class="form-control tinymce_editor_init @error('content4_'.$langItem['value']) is-invalid  @enderror" name="content4_{{$langItem['value']}}" id="" rows="20" value=""  placeholder="Nhập chính sách bảo hành" >
+                                                                    {{ old('content4_'.$langItem['value']) }}
+                                                                    </textarea>
+                                                                    @error('content4_'.$langItem['value'])
+                                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                        </div> --}}
+                                                    </div>
+                                                    @endforeach
+                                                </div>
+
                                             </div>
-                                            <div class="form-check-inline">
-                                                <label class="form-check-label">
-                                                    <input type="radio" class="form-check-input" value="0" @if(old('active')==="0" ){{'checked'}} @endif name="active">Disable
-                                                </label>
+                                            <!-- END Tổng Quan -->
+
+                                            <!-- START Dữ Liệu -->
+                                            <!-- <div id="du_lieu" class="container tab-pane fade"><br>
+                                            </div> -->
+                                            <!-- END Dữ Liệu -->
+
+                                            <!-- START Hình Ảnh -->
+                                            <div id="hinh_anh" class="container tab-pane fade"><br>
+                                                <div class="wrap-load-image mb-3">
+                                                    <div class="form-group">
+                                                        <label for="">Ảnh đại diện</label>
+                                                        <input type="file" class="form-control-file img-load-input border @error('avatar_path')
+                                                        is-invalid
+                                                        @enderror" id="" name="avatar_path">
+                                                        @error('avatar_path')
+                                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                    <img class="img-load border p-1 w-100" src="{{asset('admin_asset/images/upload-image.png')}}" style="height: 200px;object-fit:cover; max-width: 260px;">
+                                                </div>
+                                                <div class="wrap-load-image mb-3">
+                                                    <div class="form-group">
+                                                        <label for="">Ảnh liên quan</label>
+                                                        <input type="file" class="form-control-file img-load-input-multiple border @error('image')
+                                                            is-invalid
+                                                            @enderror" id="" name="image[]" multiple>
+                                                    </div>
+                                                    @error('image')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                    @enderror
+                                                    <div class="load-multiple-img">
+                                                        <img class="" src="{{asset('admin_asset/images/upload-image.png')}}">
+                                                        <img class="" src="{{asset('admin_asset/images/upload-image.png')}}">
+                                                        <img class="" src="{{asset('admin_asset/images/upload-image.png')}}">
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        @error('active')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                        <div class="form-group form-check">
-                                            <input type="checkbox" class="form-check-input" name="checkrobot" id="">
-                                            <label class="form-check-label" for="" required>Check me out</label>
-                                        </div>
-                                        @error('checkrobot')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                        <div class="form-group">
-                                            <button type="reset" class="btn btn-danger">Reset</button>
-                                            <button type="submit" class="btn btn-primary">Chấp nhận</button>
+                                            <!-- END Hình Ảnh -->
+
+                                            <!-- START Seo -->
+                                            <div id="seo" class="container tab-pane fade"><br>
+                                                <ul class="nav nav-tabs">
+                                                    @foreach ($langConfig as $langItem)
+                                                    <li class="nav-item">
+                                                        <a class="nav-link {{$langItem['value']==$langDefault?'active':''}}" data-toggle="tab" href="#seo_{{$langItem['value']}}">{{ $langItem['name'] }}</a>
+                                                    </li>
+                                                    @endforeach
+                                                </ul>
+                                                <div class="tab-content">
+                                                    @foreach ($langConfig as $langItem)
+                                                        <div id="seo_{{$langItem['value']}}" class="container tab-pane {{$langItem['value']==$langDefault?'active show':''}} fade">
+                                                            <div class="form-group">
+                                                                <div class="row">
+                                                                    <label class="col-sm-2 control-label" for="">Nhập title seo</label>
+                                                                    <div class="col-sm-10">
+                                                                        <input type="text" class="form-control @error('title_seo_'.$langItem['value']) is-invalid @enderror" id="" value="{{ old('title_seo_'.$langItem['value']) }}" name="title_seo_{{ $langItem['value'] }}" placeholder="Nhập title seo">
+                                                                        @error('title_seo_'.$langItem['value'])
+                                                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <div class="row">
+                                                                    <label class="col-sm-2 control-label" for="">Nhập mô tả seo</label>
+                                                                    <div class="col-sm-10">
+                                                                        <input type="text" class="form-control @error('description_seo_'.$langItem['value']) is-invalid @enderror" id="" value="{{ old('description_seo_'.$langItem['value']) }}" name="description_seo_{{ $langItem['value'] }}" placeholder="Nhập mô tả seo">
+                                                                        @error('description_seo_'.$langItem['value'])
+                                                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="row">
+                                                                    <label class="col-sm-2 control-label" for="">Nhập từ khóa seo</label>
+                                                                    <div class="col-sm-10">
+                                                                        <input type="text" class="form-control @error('keyword_seo_'.$langItem['value']) is-invalid @enderror" id="" value="{{ old('keyword_seo_'.$langItem['value']) }}" name="keyword_seo_{{ $langItem['value'] }}" placeholder="Nhập mô tả seo">
+                                                                        @error('keyword_seo_'.$langItem['value'])
+                                                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="row">
+                                                                    <label class="col-sm-2 control-label" for="">Nhập tags</label>
+                                                                    <div class="col-sm-10">
+                                                                        {{-- {{ dd(old('tags_'.$langItem['value'])) }} --}}
+                                                                        <select class="form-control tag-select-choose w-100" multiple="multiple" name="tags_{{$langItem['value']}}[]">
+                                                                            @if (old('tags_'.$langItem['value']))
+                                                                                @foreach (old('tags_'.$langItem['value']) as $tag)
+                                                                                    <option value="{{ $tag }}" selected>{{ $tag }}</option>
+                                                                                @endforeach
+                                                                            @endif
+                                                                        </select>
+                                                                        @error('title_seo')
+                                                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+
+                                            </div>
+                                            <!-- END Seo -->
                                         </div>
                                     </div>
                                 </div>
@@ -133,120 +376,257 @@
                             <div class="col-md-4">
                                 <div class="card card-outline card-primary">
                                     <div class="card-header">
-                                       <h3 class="card-title">Thông tin khác</h3>
-                                    </div>
-                                    <div class="card-body table-responsive p-3">
-                                        <div class="wrap-load-image mb-3">
-                                            <div class="form-group">
-                                                <label for="">Avatar</label>
-                                                <input type="file" class="form-control-file img-load-input border @error('avatar_path')
-                                                is-invalid
-                                                @enderror" id="" name="avatar_path">
-                                            </div>
-                                            @error('avatar_path')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror
-                                            <img class="img-load border p-1 w-100" src="{{asset('admin_asset/images/upload-image.png')}}" style="height: 200px;object-fit:cover;">
-                                        </div>
-                                        <div class="wrap-load-image mb-3">
-                                            <div class="form-group">
-                                                <label for="">Images</label>
-                                                <input type="file" class="form-control-file img-load-input border @error('image')
-                                                    is-invalid
-                                                    @enderror" id="" name="image[]" multiple>
-                                            </div>
-                                            @error('image')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror
-                                            <div class="load-multiple-img">
-                                                <img class="" src="{{asset('admin_asset/images/upload-image.png')}}">
-                                                <img class="" src="{{asset('admin_asset/images/upload-image.png')}}">
-                                                <img class="" src="{{asset('admin_asset/images/upload-image.png')}}">
-                                            </div>
-                                         </div>
-
-                                        <div class="row">
-                                            <div class="col-md-8">
-                                                <div class="form-group">
-                                                    <label for="">Price</label>
-                                                    <input type="text" class="form-control
-                                                @error('price') is-invalid @enderror" id="" value="{{ old('price') }}" name="price" placeholder="Nhập price">
-                                                </div>
-                                                @error('price')
-                                                <div class="alert alert-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="">Sale(%)</label>
-                                                    <input type="number" class="form-control @error('sale')
-                                                        is-invalid
-                                                        @enderror" id="" value="{{ old('sale') }}" name="sale" placeholder="Nhập sale">
-                                                </div>
-                                                @error('sale')
-                                                <div class="alert alert-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-
-                                        </div>
+                                        <h3 class="card-title">Thông tin khác</h3>
+                                     </div>
+                                     <div class="card-body table-responsive p-3">
                                         <div class="form-group">
+                                            <label class="control-label" for="">Mã sản phẩm</label>
+                                            <input type="text" min="0" class="form-control  @error('masp') is-invalid  @enderror"  value="{{ old('masp') }}" name="masp" placeholder="Nhập mã sản phẩm">
+                                            @error('masp')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        {{-- <div class="form-group">
+                                            <label class="control-label" for="">Màu</label>
+                                            <input type="text" min="0" class="form-control  @error('file3') is-invalid  @enderror"  value="{{ old('file3') }}" name="file3" placeholder="Nhập màu">
+                                            @error('file3')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        </div> --}}
+
+                                        <div class="form-group">
+                                            <label class="control-label" for="">Chọn danh mục</label>
+                                            <select class="form-control custom-select select-2-init @error('category_id')
+                                                is-invalid
+                                                @enderror" id="" value="{{ old('category_id') }}" name="category_id">
+                                                <option value="0">--- Chọn danh mục cha ---</option>
+
+                                                @if (old('category_id'))
+                                                    {!! \App\Models\CategoryProduct::getHtmlOption(old('category_id')) !!}
+                                                @else
+                                                {!!$option!!}
+                                                @endif
+                                            </select>
+                                            @error('category_id')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        {{-- <div class="form-group">
+                                            <label class="control-label" for="">Chọn nhà cung cấp</label>
+                                            <select class="form-control @error('supplier_id')
+                                                is-invalid
+                                                @enderror" id="" value="{{ old('supplier_id') }}" name="supplier_id">
+
+                                                <option value="0">--- Chọn nhà cung cấp ---</option>
+                                                @foreach ($supplier as $item)
+                                                <option value="{{ $item->id }}" @if (old('supplier_id')) {{ old('supplier_id')==  $item->id ?"selected":""}} @endif>{{ $item->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('supplier_id')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        </div> --}}
+
+                                        <div class="form-group">
+                                            <label class="control-label" for="">Số thứ tự</label>
+
+                                            <input type="number" min="0" class="form-control  @error('order') is-invalid  @enderror"  value="{{ old('order') }}" name="order" placeholder="Nhập số thứ tự">
+
+                                            @error('order')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class=" control-label" for="">Sale(%)</label>
+                                            <input type="number" min="0" class="form-control  @error('sale') is-invalid  @enderror"  value="{{ old('sale') }}" name="sale" placeholder="Nhập sale">
+
+                                            @error('sale')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label" for="">Sản phẩm bán chạy</label>
                                             <div class="form-check-inline">
-                                                <label class="form-check-label">Hot
+                                                <label class="form-check-label">
                                                     <input type="checkbox" class="form-check-input @error('hot')
                                                         is-invalid
                                                         @enderror" value="1" name="hot" @if(old('hot')==="1" ) {{'checked'}} @endif>
                                                 </label>
                                             </div>
+                                            @error('hot')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
                                         </div>
-                                        @error('hot')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                        {{-- <div class="form-group">
-                                        <label for="">Number</label>
-                                        <input type="text" class="form-control" id="" value="{{ old('number') }}" name="number" placeholder="Nhập number">
-                                        </div>
-                                        @error('number')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror --}}
-
+                                        {{--
                                         <div class="form-group">
-                                            <label for="">Thời gian bảo hành (tháng)</label>
-                                            <input type="text" class="form-control @error('warranty')
+                                            <label class="control-label" for="">Sản phẩm Ngọc</label>
+                                            <div class="form-check-inline">
+                                                <label class="form-check-label">
+                                                    <input type="checkbox" class="form-check-input @error('sp_ngoc')
+                                                        is-invalid
+                                                        @enderror" value="1" name="sp_ngoc" @if(old('sp_ngoc')==="1" ) {{'checked'}} @endif>
+                                                </label>
+                                            </div>
+                                            @error('sp_ngoc')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        --}}
+                                        <div class="form-group">
+                                            <label class="control-label" for="">Trạng thái</label>
+                                            <div class="form-check-inline">
+                                                <label class="form-check-label">
+                                                <input type="radio" class="form-check-input" value="1" name="active" @if(old('active')==='1' ||old('active')===null) {{'checked'}} @endif>Hiện
+                                                </label>
+                                            </div>
+                                            <div class="form-check-inline">
+                                                <label class="form-check-label">
+                                                    <input type="radio" class="form-check-input" value="0" @if(old('active')==="0" ){{'checked'}} @endif name="active">Ẩn
+                                                </label>
+                                            </div>
+                                            @error('active')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <hr>
+										 {{--
+                                        <div class="alert alert-light  mt-3 mb-1">
+                                            <strong>Chọn thuộc tính</strong>
+                                          </div>
+
+                                         @foreach ($attributes as $key=> $attribute)
+
+                                            <div class="form-group">
+                                                <label class="control-label" for="">{{ $attribute->name }}</label>
+                                                <select class="form-control"  name="attribute[]" >
+                                                    <option value="0">--Chọn--</option>
+                                                    @foreach ($attribute->childs()->orderby('order')->get() as $k=> $attr)
+                                                        <option value="{{ $attr->id }}" @if (old('attribute')) {{ $attr->id== old('attribute')[$key]?'selected':"" }} @endif>{{ $attr->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('attribute.'.$key)
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                         @endforeach
+                                            <hr>
+--}}
+                                            {{-- <div class="form-group">
+                                                <label class="control-label" for="">Giá</label>
+                                                <input type="number" min="0" class="form-control  @error('price') is-invalid  @enderror"  value="{{ old('price') }}" name="price" placeholder="Nhập giá">
+                                                @error('price')
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
+                                            </div> --}}
+                                        {{--
+                                        <div class="alert alert-light mt-3 mb-1">
+                                            <strong>Upload file</strong>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="">Brochure</label>
+                                            <input type="file" class="form-control-file img-load-input border @error('file')
                                             is-invalid
-                                            @enderror" id="" value="{{ old('warranty') }}" name="warranty" placeholder="Nhập warranty">
+                                            @enderror" id="" name="file">
+                                            @error('file')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
                                         </div>
-                                        @error('warranty')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-
-                                        {{-- <div class="form-group">
-                                            <label for="">Số lượt xem</label>
-                                            <input type="mumber" class="form-control @error('view')
+                                        <div class="form-group">
+                                            <label for="">Hướng dẫn sử dụng</label>
+                                            <input type="file" class="form-control-file img-load-input border @error('file2')
                                             is-invalid
-                                            @enderror" id="" value="{{ old('view') }}" name="view" placeholder="Nhập view">
+                                            @enderror" id="" name="file2">
+                                            @error('file2')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
                                         </div>
-                                        @error('view')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror --}}
-
                                         <div class="form-group">
-                                            <label for="">Nhập description_seo</label>
-                                            <input type="text" class="form-control @error('description_seo') is-invalid @enderror" id="" value="{{ old('description_seo') }}" name="description_seo" placeholder="Nhập description_seo">
-                                        </div>
-                                        @error('description_seo')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-
-                                        <div class="form-group">
-                                            <label for="">Nhập title_seo</label>
-                                            <input type="text" class="form-control @error('title_seo') is-invalid @enderror" id="" value="{{ old('title_seo') }}" name="title_seo" placeholder="Nhập title_seo">
-                                        </div>
-                                        @error('title_seo')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
+                                            <label for="">Drive</label>
+                                            <input type="file" class="form-control-file img-load-input border @error('file3')
+                                            is-invalid
+                                            @enderror" id="" name="file3">
+                                            @error('file3')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        </div> --}}
+                                     </div>
                                 </div>
-                           </div>
+                                <div class="card card-outline card-primary">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Nhập giá sản phẩm</h3>
+                                    </div>
+                                     <div class="card-body table-responsive p-3">
+                                            <div class="item-price-default">
+                                                {{--<h3>Mặc định</h3>--}}
+                                                <div class="form-group">
+                                                    <label class="control-label" for="">Giá</label>
+                                                    <input type="number" min="0" class="form-control  @error('price') is-invalid  @enderror"  value="{{ old('price') }}" name="price" placeholder="Nhập giá">
+                                                    @error('price')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label" for="">Giá cũ</label>
+                                                    <input type="number" min="0" class="form-control  @error('old_price') is-invalid  @enderror"  value="{{ old('old_price') }}" name="old_price" placeholder="Nhập giá cũ">
+                                                    @error('old_price')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label" for="">Chọn loại</label>
+                                                    <input type="text" min="0" class="form-control  @error('size') is-invalid  @enderror"  value="{{ old('size') }}" name="size" placeholder="Nhập kích thước">
+                                                    @error('size')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="">Thêm loại <a data-url="{{ route('admin.product.loadOptionProduct') }}" class="btn  btn-info btn-md float-right " id="addOptionProduct">+ Thêm loại</a></div>
+                                            <div class="list-item-option wrap-option mt-3" id="wrapOption">
+                                                @if (old('priceOption')&&old('priceOption'))
+                                                    @foreach (old('priceOption') as $key=>$value)
+                                                    <div class="item-price">
+                                                        <div class="box-content-price">
+                                                            <div class="form-group">
+                                                                <label class="control-label" for="">Giá</label>
+                                                                <input type="number" min="0" class="form-control  @error('priceOption.'.$key) is-invalid  @enderror"  value="{{ $value }}" name="priceOption[]" placeholder="Nhập giá">
+                                                                @error('priceOption.'.$key)
+                                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label" for="">Giá cũ</label>
+                                                                <input type="number" min="0" class="form-control  @error('old_priceOption.'.$key) is-invalid  @enderror"  value="{{ old('old_priceOption')[$key] }}" name="old_priceOption[]" placeholder="Nhập giá cũ">
+                                                                @error('old_priceOption.'.$key)
+                                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label" for="">Loại</label>
+                                                                <input type="text" min="0" class="form-control  @error('sizeOption.'.$key) is-invalid  @enderror"  value="{{ old('sizeOption')[$key] }}" name="sizeOption[]" placeholder="Nhập Loại">
+                                                                @error('sizeOption.'.$key)
+                                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                        <div class="action">
+                                                            <a  class="btn btn-sm btn-danger deleteOptionProduct"><i class="far fa-trash-alt"></i></a>
+                                                        </div>
+                                                    </div>
+                                                    @endforeach
+                                                @endif
+                                            </div>
+
+                                     </div>
+                                </div>
+
+
+                            </div>
                         </div>
                     </form>
                 </div>

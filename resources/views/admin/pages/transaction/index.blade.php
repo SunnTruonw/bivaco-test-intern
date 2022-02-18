@@ -5,6 +5,12 @@
 ul{
     padding-left: 20px;
 }
+	.info-box .info-box-number {
+    display: block;
+    margin-top: .25rem;
+		color: #f00;
+    font-weight: 700;
+}
 </style>
 @endsection
 @section('content')
@@ -20,11 +26,10 @@ ul{
                                 <div class="row">
                                     @foreach ($dataTransactionGroupByStatus as $item)
 
-                                    <div class="col-md-3 col-sm-6 col-12">
+                                    <div class="col-md-4 col-sm-6 col-12">
                                         <div class="info-box">
                                         <span class="info-box-icon bg-info"><i class="fas fa-calculator"></i></span>
                                         <div class="info-box-content">
-
                                             <span class="info-box-text">Số giao dịch {{ $item['name'] }} </span>
                                             <span class="info-box-number"><strong>{{ number_format($item['total']??0) }}</strong> / tổng số {{ $totalTransaction }}</span>
                                         </div>
@@ -44,15 +49,12 @@ ul{
                               <h3 class="card-title">Danh sách đơn hàng mới</h3>
                               <div class="card-tools w-60">
                                   <form action="{{ route('admin.transaction.index') }}" method="GET">
-
                                     <div class="row">
                                         <div class="col-md-9">
                                             <div class="row">
                                                 <div class="form-group col-md-4 mb-0">
-                                                    <input id="keyword" value="{{ $keyword }}" name="keyword" type="text" class="form-control" placeholder="Từ khóa">
-                                                    <div id="keyword_feedback" class="invalid-feedback">
-
-                                                    </div>
+                                                    <input id="keyword" value="{{ $keyword }}" name="keyword" type="text" class="form-control"  placeholder="Từ khóa">
+                                                    <div id="keyword_feedback" class="invalid-feedback"></div>
                                                 </div>
                                                 <div class="form-group col-md-4 mb-0" style="min-width:100px;">
                                                     <select id="order" name="order_with" class="form-control">
@@ -72,14 +74,12 @@ ul{
                                                           @endforeach
                                                     </select>
                                                 </div>
-
                                             </div>
                                         </div>
                                         <div class="col-md-3 text-right">
-                                            <button type="submit" class="btn btn-success">Search</button>
-                                            <a href="{{ route('admin.transaction.index') }}" class="btn btn-danger">Reset</a>
+                                            <button type="submit" class="btn btn-success">Tìm kiếm</button>
+                                            <a href="{{ route('admin.transaction.index') }}" class="btn btn-danger">Làm lại</a>
                                         </div>
-
                                     </div>
                                 </form>
                               </div>
@@ -97,10 +97,11 @@ ul{
                                        <th>ID</th>
                                        <th class="text-nowrap">Thông tin</th>
                                        <th class="text-nowrap">Tổng tiền</th>
-                                       <th class="text-nowrap">Acount</th>
+                                       <th class="text-nowrap">Tài khoản</th>
                                        <th class="text-nowrap">Trạng thái</th>
+                                       <th class="text-nowrap">Thanh toán</th>
                                        <th>Thời gian</th>
-                                       <th>Action</th>
+                                       <th>Trang thái</th>
                                     </tr>
                                  </thead>
                                  <tbody>
@@ -109,6 +110,9 @@ ul{
                                          <td>{{ $transaction->id }}</td>
                                          <td>
                                              <ul>
+                                                <li>
+                                                    <strong>MGD:</strong>  {{ $transaction->code }}
+                                                  </li>
                                                  <li>
                                                    <strong>Name:</strong>  {{ $transaction->name }}
                                                  </li>
@@ -118,20 +122,26 @@ ul{
                                                  <li>
                                                   <strong>Email:</strong>   {{ $transaction->email }}
                                                  </li>
+                                                 <li>
+                                                    <strong>Hình thức thanh toán:</strong>   {{ optional($transaction->setting)->name }}
+                                                </li>
+                                                <li>
+                                                    <strong>Chi nhánh:</strong>   {{ optional($transaction->setting('cn')->first())->name }}
+                                                </li>
                                              </ul>
                                          </td>
-                                         <td class="text-nowrap">
+                                         <td class="">
                                              {{-- <span class="tag tag-success"></span> --}}
                                              <ul>
                                                 <li>
-                                                  <strong>Tổng giá trị đơn hàng:</strong>  {{ number_format($transaction->total) }}
+                                                  <strong>Tổng giá trị:</strong>  {{ number_format($transaction->total) }} đ
+                                                </li>
+                                                {{-- <li>
+                                                 <strong>Trả bằng tiền:</strong>   {{ number_format($transaction->money)}} đ
                                                 </li>
                                                 <li>
-                                                 <strong>Tri trả bằng tiền:</strong>   {{ number_format($transaction->money)}} đ
-                                                </li>
-                                                <li>
-                                                    <strong>Tri trả bằng điểm:</strong>   {{ number_format($transaction->point)}} điểm
-                                                </li>
+                                                    <strong>Sử dụng điểm:</strong>   {{ number_format($transaction->point)}} điểm
+                                                </li> --}}
                                             </ul>
                                             </td>
                                          <td class="text-nowrap">{{ $transaction->user_id?'Thành viên':'Khách vãng lai' }}</td>
@@ -140,6 +150,9 @@ ul{
                                                 'dataStatus'=>$transaction,
                                                 'listStatus'=>$listStatus,
                                             ])
+                                         </td>
+                                         <td class="wrap-load-thanhtoan" data-url="{{ route('admin.product.load.thanhtoan',['id'=>$transaction->id]) }}">
+                                            @include('admin.components.load-change-thanhtoan',['data'=>$transaction])
                                          </td>
                                          <td class="text-nowrap">{{ $transaction->created_at }}</td>
                                          <td>

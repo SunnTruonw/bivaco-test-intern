@@ -6,7 +6,7 @@ $(function() {
         displayImage(input, '.wrap-load-image', '.img-load');
     });
     // js load nhiều ảnh khi upload
-    $(document).on('change', '.img-load-input', function() {
+    $(document).on('change', '.img-load-input-multiple', function() {
         let input = $(this);
         displayMultipleImage(input, '.wrap-load-image', '.load-multiple-img');
     });
@@ -16,6 +16,40 @@ $(function() {
     $(document).on('change keyup', '#name', function() {
         let name = $(this).val();
         $('#slug').val(ChangeToSlug(name));
+    });
+
+    $(document).on('click', '.lb-active-star', function() {
+        event.preventDefault();
+        let wrapActive = $(this).parents('td');
+        let urlRequest = $(this).data("url");
+        Swal.fire({
+            title: 'Bạn có chắc chắn muốn thay đổi trạng thái đánh giá',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Tôi đồng ý'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "GET",
+                    url: urlRequest,
+                    success: function(data) {
+                        if (data.code == 200) {
+                            let html = data.html;
+                            wrapActive.html(html);
+                        }
+                    }
+                });
+            }
+        })
+    });
+
+
+    // js render slug khi nhập tên
+    $(document).on('change keyup', '.nameChangeSlug', function() {
+        let name = $(this).val();
+        $(this).parents('.wrapChangeSlug').find('.resultSlug').val(ChangeToSlug(name));
     });
     // end js render slug khi nhập tên
 
@@ -183,6 +217,99 @@ $(function() {
                 });
             }
         })
+    });
+
+    $(document).on('click', '.lb-thanhtoan', function() {
+        event.preventDefault();
+        let wrapActive = $(this).parents('.wrap-load-thanhtoan');
+        let urlRequest = wrapActive.data("url");
+        let value = $(this).data("value");
+        let title = '';
+        if (value) {
+            title = 'Bạn có chắc chắn muốn chuyển đơn hàng sang trạng thái chưa thanh toán ';
+        } else {
+            title = 'Bạn có chắc chắn muốn chuyển  đơn hàng sang trạng thái đã thanh toán';
+        }
+        Swal.fire({
+            title: title,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Tiếp tục!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "GET",
+                    url: urlRequest,
+                    success: function(data) {
+                        if (data.code == 200) {
+                            let html = data.html;
+                            wrapActive.html(html);
+                        }
+                    }
+                });
+            }
+        })
+    });
+
+    // js load change trạng thái hot và active
+    $(document).on('change', '.lb-order', function() {
+        event.preventDefault();
+        let wrap = $(this);
+        let urlRequest = wrap.data("url");
+        let value = $(this).val();
+
+        if (value !== '') {
+            var number_regex = /([0-9]{1,})/;
+            if (number_regex.test(value) == false) {
+                alert('Số thứ tự của bạn không đúng định dạng!');
+            } else {
+                let title = '';
+                title = 'Bạn có chắc chắn muốn đổi số thứ tự ';
+                $.ajax({
+                    type: "GET",
+                    url: urlRequest,
+                    data: { order: value },
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.code == 200) {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: response.html,
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+
+                        } else {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'error',
+                                title: response.html,
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+
+                        // console.log( response.html);
+                    },
+                    error: function(response) {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'error',
+                            title: response.html,
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                });
+            }
+        } else {
+            alert('Bạn chưa điền số thứ tự');
+        }
+
+
     });
 
     // end  js load change trạng thái hot và active

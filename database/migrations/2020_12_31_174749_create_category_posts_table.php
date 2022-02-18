@@ -15,12 +15,17 @@ class CreateCategoryPostsTable extends Migration
     {
         Schema::create('category_posts', function (Blueprint $table) {
             $table->bigIncrements("id");
-            $table->string("name",255);
-            $table->string("slug",255);
+          //  $table->string("name",255);
+          //  $table->string("slug",255);
             $table->string("icon_path",255)->nullable();
             $table->string("avatar_path",255)->nullable();
+         //   $table->string("description",255)->nullable();
+        //    $table->longText("content")->nullable();
+         //   $table->string("description_seo",255)->nullable();
+        //    $table->string("title_seo",255)->nullable();
             $table->tinyInteger("active")->default(1);
             $table->bigInteger('parent_id')->unsigned()->default(0);
+            $table->bigInteger('order')->nullable()->default(0);
             $table->bigInteger('admin_id')->unsigned();
             //  $table->foreign('user_id')->references('id')->on('admins')->onDelete('cascade');
             $table->timestamps();

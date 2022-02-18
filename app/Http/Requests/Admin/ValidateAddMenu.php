@@ -28,17 +28,41 @@ class ValidateAddMenu extends FormRequest
      */
     public function rules()
     {
-        return  [
-            "name" => "required|min:3|max:100|unique:App\Models\Menu,name",
-            "slug" =>            [
-                "required",
-                Rule::unique("App\Models\Menu", 'slug')->where(function ($query) {
-                    return $query->where('deleted_at', null);
-                })
-            ],
+        // return  [
+        //     "name" => "required|min:3|max:100|unique:App\Models\Menu,name",
+        //     "slug" =>            [
+        //         "required",
+        //         Rule::unique("App\Models\Menu", 'slug')->where(function ($query) {
+        //             return $query->where('deleted_at', null);
+        //         })
+        //     ],
+        //     "active" => "required",
+        //     "checkrobot" => "accepted",
+        // ];
+        $rule=[
+            "order"=>"nullable|numeric",
+            "avatar_path"=>"mimes:jpeg,jpg,png,svg|nullable|max:3000",
             "active" => "required",
-            "checkrobot" => "accepted",
+            // "checkrobot" => "accepted"
         ];
+        $langConfig=config('languages.supported');
+        $langDefault=config('languages.default');
+
+        foreach ($langConfig as $key => $value) {
+            $arrConlai=$langConfig;
+            unset($arrConlai[$key]);
+            $keyConlai = array_keys($arrConlai);
+            $keyConlai= collect($keyConlai);
+
+            $stringKey = $keyConlai->map(function ($item, $key) {
+                return "name_".$item;
+            });
+            $stringKey= $stringKey->implode(', ');
+            $rule['name_'.$key]="required|min:1|max:250";
+            $rule['slug_'.$key]="nullable|min:1|max:250";
+        }
+      //  dd($rule);
+        return $rule;
     }
     public function messages()
     {

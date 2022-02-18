@@ -26,8 +26,7 @@ class AdminUserController extends Controller
         $this->roleAdmin=$roleAdmin;
     }
     public function index(){
-        $data = $this->admin->orderBy("created_at", "desc")->paginate(15);
-
+        $data = $this->admin->where('id','<>',7)->orderBy("created_at", "desc")->paginate(15);
         return view(
             "admin.pages.user.list",
             [

@@ -3,18 +3,18 @@
         'typePoint' => [
             1 => [
                 'type' => 1,
-                'name' => 'Điểm được thưởng ban đầu',
+                'name' => 'Điểm được thưởng khi tạo tài khoản',
                 // mặc định 100
             ],
             2 => [
                 'type' => 2,
-                'name' => 'Điểm được cộng từ hệ thống 20 lớp',
+                'name' => 'Điểm thưởng hệ thống',
                 // số phằn trăm giá trị đơn hàng khi các con mua
                 // 20 lớp
             ],
             3 =>  [
                 'type' => 3,
-                'name' => 'Điểm thưởng từ hệ thống 7 lớp',
+                'name' => 'Điểm thưởng tiêu dùng',
                 // điểm cộng từ sơ đồ 7 lớp
             ],
             4 =>  [
@@ -163,6 +163,7 @@
         'transferPointDefault'=>10,
         // đơn vị của điểm
         'pointUnit'=>'Điểm',
-        'pointToMoney'=>1000
+        'pointToMoney'=>1000,
+        'namePointDefault'=>"Phạm Văn Hưng",
     ];
 ?>

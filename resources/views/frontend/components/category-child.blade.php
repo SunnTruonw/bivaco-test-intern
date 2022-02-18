@@ -1,5 +1,11 @@
-
-<li class="">
+@php
+     $listIdChildren = $modelCategory->getALlCategoryChildrenAndSelf($childs->id);
+        $listItem=$modelCategory->select(['id'])->whereIn('id',$listIdChildren)->get();
+        $listItemSlugFull = $listItem->map(function ($item, $key) {
+            return $item->slug_full;
+    });
+@endphp
+<li class="@if($listItemSlugFull->contains($urlActive)) active @endif">
     <a href="{{ makeLink($type,$childs->id,$childs->slug) }}"><span>{{ $childs->name }}</span>
         @if ($childs->childs->count())
         <i class="fa fa-angle-right pt_icon_right"></i>
@@ -7,8 +13,8 @@
     </a>
 
     @if ($childs->childs->count())
-        <ul class="">
-            @foreach ($childs->childs as $childValue2)
+        <ul class="" @if($listItemSlugFull->contains($urlActive)) style="display:block" @endif>
+            @foreach ($childs->childs()->orderby('order')->orderByDesc('created_at')->get() as $childValue2)
                 @include('frontend.components.category-child', ['childs' => $childValue2])
             @endforeach
         </ul>

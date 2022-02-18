@@ -14,7 +14,16 @@
         </ul>
     </li> --}}
     @foreach ($data as $value)
-        <li class="nav_item">
+        @php
+            $listIdChildren = $modelCategory->getALlCategoryChildrenAndSelf($value->id);
+            $listItem=$modelCategory->select(['id'])->whereIn('id',$listIdChildren)->get();
+
+            $listItemSlugFull = $listItem->map(function ($item, $key) {
+                return $item->slug_full;
+            });
+        //   dd($listItemSlugFull->contains($urlActive));
+        @endphp
+        <li class="nav_item @if($listItemSlugFull->contains($urlActive)) active @endif">
             <a href="{{ makeLink($type,$value->id,$value->slug) }}"><span>{{ $value->name }}</span>
                 @if ($value->childs->count())
                 <i class="fa fa-angle-right pt_icon_right"></i>
@@ -22,8 +31,8 @@
             </a>
 
             @if ($value->childs->count())
-                <ul class="menu-side-bar-leve-2">
-                    @foreach ($value->childs as $childValue)
+                <ul class="menu-side-bar-leve-2" @if($listItemSlugFull->contains($urlActive)) style="display:block" @endif>
+                    @foreach ($value->childs()->orderby('order')->orderByDesc('created_at')->get() as $childValue)
                         @include('frontend.components.category-child', ['childs' => $childValue])
                     @endforeach
                 </ul>

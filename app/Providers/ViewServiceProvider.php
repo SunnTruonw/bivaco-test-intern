@@ -29,10 +29,16 @@ class ViewServiceProvider extends ServiceProvider
     {
         view()->composer('*', function ($view)
         {
+            $priceSearch=config('web_default.priceSearch');
             $shareFrontend=[];
             $shareFrontend['noImage']=config('web_default.frontend.noImage');
             $shareFrontend['userNoImage']=config('web_default.frontend.userNoImage');
-            $view->with('shareFrontend', $shareFrontend);
+            $langConfig=config('languages.supported');
+            $langDefault=config('languages.default');
+            $view->with('shareFrontend', $shareFrontend)
+            ->with('langConfig',$langConfig)
+            ->with('langDefault',$langDefault)
+            ->with('priceSearch',$priceSearch);
         });
         view()->composer(
             [
@@ -46,7 +52,14 @@ class ViewServiceProvider extends ServiceProvider
                 'frontend.pages.contact',
                 'frontend.pages.about-us',
                 'frontend.pages.search',
-
+                'frontend.pages.*',
+                'frontend.pages.profile*',
+                'auth.*',
+                // 'frontend.pages.profile-create-member',
+                // 'frontend.pages.profile-edit-info',
+                // 'frontend.pages.profile-history',
+                // 'frontend.pages.profile-list-member',
+                // 'frontend.pages.profile-list-rose',
             ], function ($view) {
                 $setting= new Setting();
                 $header=$this->getDataHeaderTrait($setting);
@@ -57,9 +70,11 @@ class ViewServiceProvider extends ServiceProvider
         view()->composer(
             [
                 'frontend.pages.product',
+                'frontend.pages.product-by-category',
                 'frontend.pages.product-detail',
                 'frontend.pages.post',
                 'frontend.pages.post-detail',
+                'frontend.pages.post-by-category',
             ], function ($view) {
                 $categoryPost= new CategoryPost();
                 $categoryProduct= new CategoryProduct();

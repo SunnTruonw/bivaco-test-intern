@@ -1,5 +1,6 @@
 $(document).on("click", ".lb_delete", actionDelete);
 $(document).on("click", ".lb_delete_recusive", actionDeleteRecusive);
+$(document).on("click", ".lb_delete_image", actionDeleteImage);
 
 function actionDeleteRecusive(event) {
     event.preventDefault();
@@ -65,6 +66,42 @@ function actionDelete(event) {
                     if (data.code == 200) {
 
                         mythis.parents("tr").remove();
+                    }
+                },
+                error: function() {
+
+                }
+            });
+            // Swal.fire(
+            // 'Deleted!',
+            // 'Your file has been deleted.',
+            // 'success'
+            // )
+        }
+    })
+}
+
+function actionDeleteImage(event) {
+    event.preventDefault();
+    let urlRequest = $(this).data("url");
+    let mythis = $(this);
+    Swal.fire({
+        title: 'Bạn có chắc chắn muốn xóa',
+        text: "Bạn sẽ không thể khôi phục điều này",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                type: "GET",
+                url: urlRequest,
+                success: function(data) {
+                    if (data.code == 200) {
+
+                        mythis.parents(".col-image").remove();
                     }
                 },
                 error: function() {

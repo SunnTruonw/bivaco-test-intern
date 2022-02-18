@@ -30,7 +30,8 @@ class AdminContactController extends Controller
         // ->selectRaw('count(*) as total, status')
         // ->get();
         // dd($collection);
-        $contactGroupByStatus = $this->contact->select($this->contact->raw('count(status) as total'), 'status')->groupBy('status')->get();
+
+        $contactGroupByStatus = $this->contact->where('status','<>',-1)->select($this->contact->where('status','<>',-1)->raw('count(status) as total'), 'status')->groupBy('status')->get();
         $totalContact = $this->contact->all()->count();
 
         $dataContactGroupByStatus = $this->listStatus;

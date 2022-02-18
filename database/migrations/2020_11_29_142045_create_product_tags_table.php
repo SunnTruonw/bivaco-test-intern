@@ -17,6 +17,7 @@ class CreateProductTagsTable extends Migration
             $table->bigIncrements("id");
             $table->bigInteger("product_id")->unsigned();
             $table->bigInteger("tag_id")->unsigned();
+            $table->string("language",255);
             $table->timestamps();
         });
     }

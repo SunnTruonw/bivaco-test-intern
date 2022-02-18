@@ -81,6 +81,13 @@ class User extends Authenticatable
     {
         return $this->belongsTo(User::class, 'parent_id', 'id');
     }
+
+     // lấy user con 20 tầng
+     public function transactions()
+     {
+         return $this->hasMany(Transaction::class, 'user_id', 'id');
+     }
+
     // lấy user con 7 tầng
     public function childs2()
     {
@@ -145,9 +152,7 @@ class User extends Authenticatable
         $numberChild = 3;
         // công thức tính tổng số phần tử ở vòng thứ n là x*0 + (x^(n+1)-x)/(x-1);
         // công thức tính số phần tử của vòng thứ n = x^n;
-        $numberUserDatabase = $this->where([
-            'active' => 1,
-        ])->get()->count();
+        $numberUserDatabase = $this->whereIn('active', [1,2])->get()->count();
         if ($numberUserDatabase > 0) {
 
             $numberUser = $numberUserDatabase + 1;
@@ -195,9 +200,7 @@ class User extends Authenticatable
              // dd($ck, $start, $end);
             }
 
-            $userParent = $this->where([
-                'active' => 1
-            ])->orderBy('order', 'asc')->offset($stt - 1)->limit(1)->first();
+            $userParent = $this->whereIn('active', [1,2])->orderBy('order', 'asc')->offset($stt - 1)->limit(1)->first();
             $parent_id2=$userParent->id;
           //  dd($stt);
         } else {

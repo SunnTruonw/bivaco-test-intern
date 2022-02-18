@@ -28,23 +28,39 @@ class ValidateEditCategoryPost extends FormRequest
      */
     public function rules()
     {
-        return [
-            "name" => "required|min:3|max:100",
-            "slug" => [
-                "required",
-                Rule::unique("App\Models\CategoryPost", 'slug')->where(function ($query) {
-                    $id = request()->route()->parameter("id");
-                    return $query->where([
-                        ['deleted_at', '=', null],
-                        ["id", "<>", $id]
-                    ]);
-                })
-            ],
-            "icon" => "mimes:jpeg,jpg,png,svg|nullable|max:3000",
-            "avatar" => "mimes:jpeg,jpg,png,svg|nullable|max:3000",
+        $rule = [
+            "order" => "nullable|numeric",
+            "avatar_path" => "mimes:jpeg,jpg,png,svg|nullable|file|max:3000",
+            "icon_path" => "mimes:jpeg,jpg,png,svg|nullable|file|max:3000",
             "active" => "required",
-            "checkrobot" => "accepted"
         ];
+        $langConfig = config('languages.supported');
+        $langDefault = config('languages.default');
+
+        foreach ($langConfig as $key => $value) {
+            $arrConlai = $langConfig;
+            unset($arrConlai[$key]);
+            $keyConlai = array_keys($arrConlai);
+            $keyConlai = collect($keyConlai);
+
+            $stringKey = $keyConlai->map(function ($item, $key) {
+                return "slug_" . $item;
+            });
+            $stringKey = $stringKey->implode(', ');
+            $idPro = request()->route()->parameter('id');
+            $pro = \App\Models\CategoryPost::find($idPro)->translationsLanguage($key)->first();
+            $id = optional($pro)->id;
+            $rule['name_' . $key] = "required|min:3|max:250";
+            $rule['slug_' . $key] = [
+                "required",
+                'different:' . $stringKey,
+                Rule::unique("App\Models\CategoryPostTranslation", 'slug')->ignore($id, 'id'),
+            ];
+            $rule['title_seo_'.$key]="nullable|min:1|max:191";
+            $rule['description_seo_'.$key]="nullable|min:1|max:191";
+            $rule['keyword_seo_'.$key]="nullable|min:1|max:191";
+        }
+        return $rule;
     }
 
     public function messages()

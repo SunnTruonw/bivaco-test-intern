@@ -53,8 +53,8 @@ trait PointTrait
         $userLoop = [$user];
         // dd($userLoop->childs()->first()->childs()->first()->childs()->first()->childs()->first());
         $data =  $this->getListUser20Recusive($userLoop, 1);
-      //  $data=collect($data);
-       // dd($data->orderby('created_at'));
+        //  $data=collect($data);
+        // dd($data->orderby('created_at'));
         return $data;
     }
     public function getListUser20Recusive($userLoop, $i = 1, $imax = 20)
@@ -103,5 +103,55 @@ trait PointTrait
             }
         }
         return $this->data;
+    }
+
+    public function addPointTo7($user)
+    {
+        $j = 1;
+        $userLoop = $user;
+        while ($j <= 7) {
+            if ($userLoop->parent_id2 != 0) {
+               // dd($userLoop->parent2()->first());
+                if($userLoop->parent2()->first()->active==1){
+                    $userLoop->parent2()->first()->points()->create([
+                        'type' => $this->typePoint[3]['type'],
+                        'point' => $this->typePoint['pointReward'],
+                        'active' => 1,
+                        'userorigin_id' => $user->id,
+                    ]);
+                }
+                $userLoop = $userLoop->parent2()->first();
+            } else {
+                break;
+            }
+            $j++;
+        }
+    }
+    public function addPointTo20($user,$total)
+    {
+        // thêm số điểm cây 20 lớp
+        $total=(float)$total;
+        $totalPoint=moneyToPoint($total);
+
+        $i = 1;
+        $userLoop = $user;
+        $typePoint = config('point.typePoint');
+        $rose = config('point.rose');
+        while ($i <= 20) {
+            if ($userLoop->parent_id != 0) {
+                if($userLoop->parent()->first()->active==1){
+                    $userLoop->parent()->first()->points()->create([
+                        'type' => $typePoint[2]['type'],
+                        'point' => $rose[$i]['percent']*$totalPoint/100,
+                        'active' => 1,
+                        'userorigin_id' => $user->id,
+                    ]);
+                }
+                $userLoop = $userLoop->parent()->first();
+            } else {
+                break;
+            }
+            $i++;
+        }
     }
 }

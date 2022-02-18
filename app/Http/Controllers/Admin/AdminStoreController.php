@@ -32,7 +32,7 @@ class AdminStoreController extends Controller
     }
     public function index()
     {
-        $data = $this->store->orderBy("created_at", "desc")->paginate(15);
+        $data = $this->store->where('active',1)->orderBy("created_at", "desc")->paginate(15);
         return view("admin.pages.store.list",
             [
                 'data' => $data,
@@ -72,10 +72,8 @@ class AdminStoreController extends Controller
                 "admin_id" => auth()->guard('admin')->id()
             ];
             if ($request->type == 1) {
-                $dataStoreCreate = [
-                    "quantity" => $request->input('quantity') ?? null,
-                    "product_id" => $product->id,
-                ];
+                $dataStoreCreate['quantity']=$request->input('quantity') ?? null;
+                $dataStoreCreate['product_id']=$product->id;
                 $store = $this->store->create($dataStoreCreate);
             }
             if ($request->type == 3) {

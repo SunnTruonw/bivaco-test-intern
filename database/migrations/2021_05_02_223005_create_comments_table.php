@@ -19,6 +19,8 @@ class CreateCommentsTable extends Migration
             $table->bigInteger('parent_id')->unsigned()->nullable();
             $table->text('content');
             $table->string("image_path",255)->nullable();
+            $table->bigInteger('like')->nullable()->default(0);
+            $table->bigInteger('share')->nullable()->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

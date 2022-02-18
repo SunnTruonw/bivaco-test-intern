@@ -46,10 +46,16 @@ class ValidateAddUser extends FormRequest
                     ]);
                 })
             ],
-            "startpoint" =>[
+            "masp"=>[
                 "required",
-                new NumberMin(200)
+                "min:3",
+                "max:250",
+                "exists:\App\Models\Product,masp",
             ],
+            // "startpoint" =>[
+            //     "required",
+            //     new NumberMin(200)
+            // ],
             // "password" =>"required",
             // "password_confirmation"=>"required|same:password",
             // "role_id"=>[
@@ -75,6 +81,10 @@ class ValidateAddUser extends FormRequest
             "password_confirmation.same" => "password_confirmation is no same password",
             "active.required" => "active  is required",
             "checkrobot.accepted" => "checkrobot slider is accepted",
+            "masp.required" => "Mã sản phẩm là trường bắt buộc",
+            "masp.min" => "ã sản phẩm  > 3",
+            "masp.max" => "ã sản phẩm  <250",
+            "masp.exists" => "Mã sản phẩm  không tồn tại",
         ];
     }
 }

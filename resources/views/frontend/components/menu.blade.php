@@ -7,11 +7,11 @@
 @endphp
 
 
-  <ul class="nav-main">
+  {{-- <ul class="nav-main"> --}}
     @foreach ($data as $value)
 
-        <li class="nav-item">
-            <a href="{{ $value['slug_full'] }}"><span>{{ $value['name'] }}</span>
+        <li class="nav-item @if ($loop->first&&$active) active @endif">
+            <a href="{{ $value['slug_full'] }}"><span>{!!  $value['name']  !!}</span>
                 @isset($value['childs'])
                 @if (count($value['childs'])>0&&$limit>=$i+1)
                 {!!  $icon_d??""  !!}
@@ -29,7 +29,7 @@
             @endisset
         </li>
     @endforeach
-</ul>
+{{-- </ul> --}}
 
 
 

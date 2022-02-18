@@ -17,6 +17,7 @@ class CreatePostTagsTable extends Migration
             $table->bigIncrements("id");
             $table->bigInteger("post_id")->unsigned();
             $table->bigInteger("tag_id")->unsigned();
+            $table->string("language",255);
             $table->timestamps();
         });
     }

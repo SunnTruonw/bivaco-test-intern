@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 //use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Components\Recusive;
+use Illuminate\Support\Facades\App;
 
 class Post extends Model
 {
@@ -14,11 +15,60 @@ class Post extends Model
     protected $guarded = [];
     // public $fillable =['name'];
 
-    protected $appends = ['slug_full'];
+    protected $appends = ['slug_full','name','slug','description','description_seo','keyword_seo','title_seo','content','language'];
     public function getSlugFullAttribute()
     {
-        return makeLink('post', $this->attributes['id'], $this->attributes['slug']);
+        return makeLink('post', $this->attributes['id'], $this->getSlugAttribute());
     }
+
+    // tạo thêm thuộc tính name
+    public function getNameAttribute()
+    {
+        //  dd($this->translationsLanguage()->first()->name);
+        return optional($this->translationsLanguage()->first())->name;
+    }
+
+    // tạo thêm thuộc tính slug
+    public function getSlugAttribute()
+    {
+        return optional($this->translationsLanguage()->first())->slug;
+    }
+    // tạo thêm thuộc tính description
+    public function getDescriptionAttribute()
+    {
+        return optional($this->translationsLanguage()->first())->description;
+    }
+    // tạo thêm thuộc tính description_seo
+    public function getDescriptionSeoAttribute()
+    {
+        return optional($this->translationsLanguage()->first())->description_seo;
+    }
+
+    // tạo thêm thuộc tính keyword_seo
+    public function getKeywordSeoAttribute()
+    {
+        return optional($this->translationsLanguage()->first())->keyword_seo;
+    }
+
+
+    // tạo thêm thuộc tính title_seo
+    public function getTitleSeoAttribute()
+    {
+        return optional($this->translationsLanguage()->first())->title_seo;
+    }
+
+    // tạo thêm thuộc tính content
+    public function getContentAttribute()
+    {
+        return optional($this->translationsLanguage()->first())->content;
+    }
+    // tạo thêm thuộc tính content
+    public function getLanguageAttribute()
+    {
+        return optional($this->translationsLanguage()->first())->language;
+    }
+
+
 
     // get tags by relationship nhieu-nhieu by table trung gian post_tags
     // 1 post có nhiều post_tags
@@ -30,6 +80,17 @@ class Post extends Model
             ->belongsToMany(Tag::class, PostTag::class, 'post_id', 'tag_id')
             ->withTimestamps();
     }
+    public function tagsLanguage($language = null)
+    {
+        if ($language == null) {
+            $language = App::getLocale();
+        }
+        return $this
+            ->belongsToMany(Tag::class, PostTag::class, 'post_id', 'tag_id')
+            ->withTimestamps()->where('language', '=', $language);
+    }
+
+
     // get category by relationship 1 - nhieu
     // 1 category_posts có nhiều post
     // 1 post có 1 category_posts
@@ -62,5 +123,18 @@ class Post extends Model
         $rec = new Recusive();
         // $prId=$this->parentId;
         return  $rec->categoryRecusive($data, 0, "parent_id", $parentId, "", "");
+    }
+
+
+    public function translationsLanguage($language = null)
+    {
+        if ($language == null) {
+            $language = App::getLocale();
+        }
+        return $this->hasMany(PostTranslation::class, "post_id", "id")->where('language', '=', $language);
+    }
+    public function translations()
+    {
+        return $this->hasMany(PostTranslation::class, "post_id", "id");
     }
 }

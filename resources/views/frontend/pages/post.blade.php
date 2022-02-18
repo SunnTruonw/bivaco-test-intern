@@ -20,49 +20,99 @@
                     'type'=>$typeBreadcrumb,
                 ])
             @endisset
-            <div class="wrap-content-main wrap-template-product template-detail">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-9 col-md-12 col-sm-12 block-content-right">
-                            <h3 class="title-template-news">{{ $category->name??"" }}</h3>
-                            @isset($data)
-                                <div class="list-news">
-                                    <div class="row">
-                                        @foreach ($data as $post)
 
-                                        <div class="fo-03-news col-lg-4 col-md-6 col-sm-6">
-                                            <div class="box">
-                                                <div class="image">
-                                                    <a href="{{ makeLink("post",$post->id,$post->slug) }}"><img src="{{ asset($post->avatar_path) }}" alt="{{ $post->name }}"></a>
+            <h1 class="title-template-news hidden">{{ $category->name??"" }}</h1>
+                <div class="blog-news">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-12">
+
+                                <div class="group-title">
+                                    <div class="title title-red">
+                                        {{ __('post.tin_tuc_noi_bat') }}
+                                    </div>
+                                </div>
+                                @isset($data_hot)
+                                <div class="list-news-2">
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12 right list-news-blog list-news-blog-nb">
+                                            <div class="row d-flex before-after-unset">
+                                                @foreach ($data_hot as $post)
+                                                <div class="fo-03-col-news  col-xs-12 col-sm-3 col-md-3">
+                                                    <div class="fo-03-news">
+                                                        <div class="box">
+                                                            <div class="image">
+                                                                <a href="{{ makeLink('post',$post->id,$post->slug) }}"><img src="{{ asset($post->avatar_path) }}" alt="{{ $post->name }}"></a>
+                                                            </div>
+                                                            <div class="content">
+                                                                <h3><a href="{{ makeLink('post',$post->id,$post->slug) }}">{{ $post->name }}</a></h3>
+                                                                <div class="desc">{!! $post->description  !!}</div>
+                                                                <div class="block-action-news">
+                                                                    <a href="{{ makeLink('post',$post->id,$post->slug) }}" class="xemthem">{{ __('post.xem_them') }}</a>
+                                                                    <span class="date">{{ date_format($post->updated_at,"d/m/Y")}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <h3><a href="{{ makeLink("post",$post->id,$post->slug) }}">{{ $post->name }}</a></h3>
-                                                <div class="date">{{ date_format($post->updated_at,"d/m/Y")}} - Admin Bivaco</div>
-                                                <div class="desc">
-                                                    {!! $post->description  !!}
+
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @endisset
+
+                                <div class="line-div-long"></div>
+
+                                <div class="group-title">
+                                    <div class="title title-red">
+                                        {{ $category->name??"" }}
+                                    </div>
+                                </div>
+                                @isset($data)
+                                <div class="list-news-2">
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12 right list-news-blog">
+                                            <div class="row d-flex before-after-unset">
+                                                @foreach ($data as $post)
+                                                <div class="fo-03-col-news  col-xs-12 col-sm-3 col-md-3">
+                                                    <div class="fo-03-news">
+                                                        <div class="box">
+                                                            <div class="image">
+                                                                <a href="{{ makeLink('post',$post->id,$post->slug) }}"><img src="{{ asset($post->avatar_path) }}" alt="{{ $post->name }}"></a>
+                                                            </div>
+                                                            <div class="content">
+                                                                <h3><a href="{{ makeLink('post',$post->id,$post->slug) }}">{{ $post->name }}</a></h3>
+                                                                <div class="desc">{!! $post->description  !!}</div>
+                                                                <div class="block-action-news">
+                                                                    <a href="{{ makeLink('post',$post->id,$post->slug) }}" class="xemthem">{{ __('post.xem_them') }}</a>
+                                                                    <span class="date">{{ date_format($post->updated_at,"d/m/Y")}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 col-sm-12 col-xs-12 right">
+                                            <div class="pagination-group">
+                                                <div class="pagination">
+                                                    @if (count($data))
+                                                    {{$data->links()}}
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
-
-                                        @endforeach
                                     </div>
                                 </div>
-                                @if (count($data))
-                                {{$data->links()}}
-                                @endif
-                            @endisset
-                        </div>
-
-                        <div class="col-lg-3 col-md-12 col-sm-12 block-content-left">
-                            @isset($sidebar)
-                                @include('frontend.components.sidebar',[
-                                    "categoryProduct"=>$sidebar['categoryProduct'],
-                                    "categoryPost"=>$sidebar['categoryPost'],
-                                ])
-                            @endisset
+                                @endisset
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
     </div>
 @endsection

@@ -22,40 +22,49 @@ class CartHelper
         $this->totalOldPrice = $this->getTotalOldPrice();
     }
     public function add($product, $quantity = 1)
-    {
-        if (isset($this->cartItems[$product->id])) {
-            $this->cartItems[$product->id]['quantity'] +=  1;
-            $this->cartItems[$product->id]['totalPriceOneItem'] = $this->getTotalPriceOneItem($this->cartItems[$product->id]);
-            $this->cartItems[$product->id]['totalOldPriceOneItem'] = $this->getTotalOldPriceOneItem($this->cartItems[$product->id]);
+    {   
+        $option_id=$product->option_id;
+        if(!$product->option_id){
+            $option_id=0;
+        }
+        
+        if (isset($this->cartItems[$product->id.'-'.$option_id])) {
+            $this->cartItems[$product->id.'-'.$option_id]['quantity'] +=  $quantity;
+            $this->cartItems[$product->id.'-'.$option_id]['totalPriceOneItem'] = $this->getTotalPriceOneItem($this->cartItems[$product->id.'-'.$option_id]);
+            $this->cartItems[$product->id.'-'.$option_id]['totalOldPriceOneItem'] = $this->getTotalOldPriceOneItem($this->cartItems[$product->id.'-'.$option_id]);
+ 
         } else {
+        
             $cartItem = [
                 'id' => $product->id,
+                'option_id'=>$product->option_id,
                 'price' => $product->price,
                 'sale' => $product->sale,
+                'size'=>$product->size,
                 'name' => $product->name,
                 'avatar_path' => $product->avatar_path,
                 'quantity' => $quantity,
             ];
             $cartItem['totalPriceOneItem'] = $this->getTotalPriceOneItem($cartItem);
             $cartItem['totalOldPriceOneItem'] = $this->getTotalOldPriceOneItem($cartItem);
-            $this->cartItems[$product->id] = $cartItem;
+            $this->cartItems[$product->id.'-'.$option_id] = $cartItem;
         }
         session(['cart' => $this->cartItems]);
     }
-    public function remove($id)
+    public function remove($id,$option_id=0)
     {
-        if (isset($this->cartItems[$id])) {
-            unset($this->cartItems[$id]);
+        if (isset($this->cartItems[$id.'-'.$option_id])) {
+            unset($this->cartItems[$id.'-'.$option_id]);
         }
         // Session::put('cart' , $this->cartItems);
         session(['cart' => $this->cartItems]);
     }
-    public function update($id, $quantity)
+    public function update($id, $quantity,$option_id=0)
     {
-        if (isset($this->cartItems[$id])) {
-            $this->cartItems[$id]['quantity'] = $quantity;
-            $this->cartItems[$id]['totalPriceOneItem'] = $this->getTotalPriceOneItem($this->cartItems[$id]);
-            $this->cartItems[$id]['totalOldPriceOneItem'] = $this->getTotalOldPriceOneItem($this->cartItems[$id]);
+        if (isset($this->cartItems[$id.'-'.$option_id])) {
+            $this->cartItems[$id.'-'.$option_id]['quantity'] = $quantity;
+            $this->cartItems[$id.'-'.$option_id]['totalPriceOneItem'] = $this->getTotalPriceOneItem($this->cartItems[$id.'-'.$option_id]);
+            $this->cartItems[$id.'-'.$option_id]['totalOldPriceOneItem'] = $this->getTotalOldPriceOneItem($this->cartItems[$id.'-'.$option_id]);
         }
         //  Session::put('cart' , $this->cartItems);
         session(['cart' => $this->cartItems]);

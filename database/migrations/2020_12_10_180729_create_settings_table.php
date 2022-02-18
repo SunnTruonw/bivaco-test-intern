@@ -15,13 +15,14 @@ class CreateSettingsTable extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->bigIncrements("id");
-            $table->string("name",255);
-            $table->text("value")->nullable();
-            $table->string("slug",255)->nullable();
-            $table->text("description")->nullable();
+          //  $table->string("name",255);
+          //  $table->text("value")->nullable();
+         //   $table->string("slug",255)->nullable();
+         //   $table->text("description")->nullable();
             $table->tinyInteger("active")->default(1);
             $table->bigInteger("parent_id")->unsigned();
             $table->string("image_path",255)->nullable();
+            $table->bigInteger('order')->nullable()->default(0);
             $table->bigInteger("admin_id")->unsigned();
 
             $table->timestamps();

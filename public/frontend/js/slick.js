@@ -11,4 +11,5 @@ $(function() {
         fade: false,
         cssEase: 'linear'
     });
+	
 })

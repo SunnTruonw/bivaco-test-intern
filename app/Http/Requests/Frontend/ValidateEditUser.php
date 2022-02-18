@@ -54,29 +54,29 @@ class ValidateEditUser extends FormRequest
                     })
                 ],
                 "avatar_path"=>"mimes:jpeg,jpg,png,svg|nullable",
-                "password" =>"min:6",
+                "password" =>"",
                 "password_confirmation"=>"same:password",
 
                 "phone" => "required|min:10|max:11",
                 'date_birth'=>"date:'d-m-Y'",
                 "address"=>"required",
-                "hktt"=>"required",
-                "cmt"=>[
-                    "required",
-                    Rule::unique("App\Models\User",'cmt')->where(function ($query) {
-                        $id=request()->route()->parameter('id');
-                        return $query->where([
-                            ['deleted_at','=', null],
-                            ['id','<>', $id],
-                        ]);
-                    })
-                ],
-                "ctk"=>"required|min:3|max:250",
-                "stk"=>"required|min:3|max:250",
-                "bank_id"=>'required|exists:App\Models\Bank,id',
-                "bank_branch" => "required|min:3|max:250",
+                //"hktt"=>"required",
+                //"cmt"=>[
+                //    "required",
+                //    Rule::unique("App\Models\User",'cmt')->where(function ($query) {
+                //        $id=request()->route()->parameter('id');
+                //        return $query->where([
+                //            ['deleted_at','=', null],
+                //            ['id','<>', $id],
+                //        ]);
+                //    })
+                //],
+                //"ctk"=>"required|min:3|max:250",
+                //"stk"=>"required|min:3|max:250",
+                //"bank_id"=>'required|exists:App\Models\Bank,id',
+                //"bank_branch" => "required|min:3|max:250",
                 "sex" => "required",
-              //  "active" => "required",
+                //"active" => "required",
                 "checkrobot" => "accepted"
             ];
         }else{
@@ -84,10 +84,10 @@ class ValidateEditUser extends FormRequest
                 "avatar_path"=>"mimes:jpeg,jpg,png,svg|nullable",
                 "password" =>"nullable|min:6",
                 "password_confirmation"=>"same:password",
-                "ctk"=>"required|min:3|max:250",
-                "stk"=>"required|min:3|max:250",
-                "bank_id"=>'required|exists:App\Models\Bank,id',
-                "bank_branch" => "required|min:3|max:250",
+                //"ctk"=>"required|min:3|max:250",
+                //"stk"=>"required|min:3|max:250",
+                //"bank_id"=>'required|exists:App\Models\Bank,id',
+                //"bank_branch" => "required|min:3|max:250",
                 "sex" => "required",
               //  "active" => "required",
                 "checkrobot" => "accepted"

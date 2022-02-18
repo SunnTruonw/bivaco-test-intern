@@ -22,15 +22,19 @@
                <td>
                    <ul>
                        <li>
-                         <strong>Name:</strong>  {{ $contact->name }}
+                         <strong>Tên:</strong>  {{ $contact->name }}
                        </li>
                        <li>
                           <strong>Email:</strong>   {{ $contact->email }}
                        </li>
                        <li>
-                        <strong>Phone:</strong>   {{ $contact->phone }}
+                        <strong>Điện thoại:</strong>   {{ $contact->phone }}
                        </li>
-
+                       @if($contact->address_detail)
+                       <li>
+                        <strong>Địa chỉ:</strong>   {{ $contact->address_detail }}
+                       </li>
+                       @endif
                    </ul>
                </td>
                <td class="text-nowrap">{{ $contact->user_id?'Thành viên':'Khách vãng lai' }}</td>

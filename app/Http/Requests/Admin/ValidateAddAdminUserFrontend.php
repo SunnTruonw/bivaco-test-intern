@@ -48,9 +48,15 @@ class ValidateAddAdminUserFrontend extends FormRequest
                     ]);
                 })
             ],
-            "startpoint" =>[
+            // "startpoint" =>[
+            //     "required",
+            //     new NumberMin(200)
+            // ],
+            "masp"=>[
                 "required",
-                new NumberMin(200)
+                "min:3",
+                "max:250",
+                "exists:\App\Models\Product,masp",
             ],
             // "password" =>"required",
             // "password_confirmation"=>"required|same:password",
@@ -59,24 +65,28 @@ class ValidateAddAdminUserFrontend extends FormRequest
             //     new ArrayValueExistDatabase(Role::all(),'id',request()->role_id)
             // ],
            // "active" => "required",
-            "checkrobot" => "accepted"
+            "checkrobot" => "accepted",
         ];
     }
     public function messages()
     {
         return [
-            "name.required" => "Name  is required",
-            "name.min" => "Name  > 3",
-            "name.max" => "Name  < 250",
-            "email.required" => "email is required",
-            "email.unique" => "email is exited",
-            "username.required" => "username is required",
-            "username.unique" => "username is exited",
-            "password.required" => "password is required",
-            "password_confirmation.required" => "password_confirmation is required",
-            "password_confirmation.same" => "password_confirmation is no same password",
-            "active.required" => "active  is required",
-            "checkrobot.accepted" => "checkrobot slider is accepted",
+            "name.required" => "Tên là trường bắt buộc",
+            "name.min" => "Tên  > 3",
+            "name.max" => "Tên  < 250",
+            "email.required" => "email là trường bắt buộc",
+            "email.unique" => "email là đã tồn tại",
+            "username.required" => "username  là trường bắt buộc",
+            "username.unique" => "username đã tồn tại",
+            "password.required" => "password  là trường bắt buộc",
+            "password_confirmation.required" => "Nhập lại password  là trường bắt buộc",
+            "password_confirmation.same" => "Nhập lại password không giống nhau",
+            "active.required" => "active  là trường bắt buộc",
+            "checkrobot.accepted" => "checkrobot  là trường bắt buộc",
+            "masp.required" => "Mã sản phẩm là trường bắt buộc",
+            "masp.min" => "ã sản phẩm  > 3",
+            "masp.max" => "ã sản phẩm  <250",
+            "masp.exists" => "Mã sản phẩm  không tồn tại",
         ];
     }
 }

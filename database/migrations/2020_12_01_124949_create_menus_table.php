@@ -15,11 +15,13 @@ class CreateMenusTable extends Migration
     {
         Schema::create('menus', function (Blueprint $table) {
             $table->bigIncrements("id");
-            $table->string("name",255);
-            $table->string("slug",255);
+           // $table->string("name",255);
+           // $table->string("slug",255);
+           $table->bigInteger('order')->nullable()->default(0);
             $table->bigInteger("parent_id")->unsigned();
             $table->bigInteger("admin_id")->unsigned();
             $table->tinyInteger("active")->default(1);
+            $table->string('avatar_path',255)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

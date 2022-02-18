@@ -20,7 +20,7 @@ class Transaction extends Model
     public $listStatus = [
         1 => [
             'status' => 1,
-            'name' => 'Chưa sử lý',
+            'name' => 'Chưa xử lý',
         ],
         2 => [
             'status' => 2,
@@ -32,7 +32,7 @@ class Transaction extends Model
         ],
         4 => [
             'status' => 4,
-            'name' => 'Hoàn thành',
+            'name' => 'Đã giao hàng',
         ],
         -1 => [
             'status' => -1,
@@ -58,7 +58,10 @@ class Transaction extends Model
     {
         return $this->belongsTo(City::class, 'city_id', 'id');
     }
-
+    public function setting($ht='httt')
+    {
+        return $this->belongsTo(Setting::class, $ht, 'id');
+    }
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');

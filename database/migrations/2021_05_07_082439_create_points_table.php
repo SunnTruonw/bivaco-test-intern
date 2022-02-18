@@ -16,6 +16,7 @@ class CreatePointsTable extends Migration
         Schema::create('points', function (Blueprint $table) {
             $table->id();
             $table->tinyInteger("type");
+            $table->float('point',10,2);
             $table->tinyInteger("active")->default(1);
             $table->bigInteger("user_id")->unsigned();
             $table->bigInteger('userorigin_id')->unsigned()->nullable();

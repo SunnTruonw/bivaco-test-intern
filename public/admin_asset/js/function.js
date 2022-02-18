@@ -2,13 +2,19 @@
 // paramter selectorWrap slector thẻ bọc của image và input
 // paramter selectorImg slector thẻ bọc của image
 function displayImage(input, selectorWrap, selectorImg) {
-    let img = input.parents(selectorWrap).find(selectorImg);
+    input.parents(selectorWrap).find(selectorImg).remove();
+
     let file = input.prop('files')[0];
     let reader = new FileReader();
 
     reader.addEventListener("load", function() {
         // convert image file to base64 string
-        img.attr('src', reader.result);
+        let img = $('<img />');
+        img.attr({
+            'src': reader.result,
+            'alt': file.name,
+        });
+        input.parents(selectorWrap).append(img);
     }, false);
 
     if (file) {

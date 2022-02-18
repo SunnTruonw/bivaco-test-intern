@@ -1,22 +1,22 @@
- <div class="breadcrumbs clearfix">
+<div class="text-left wrap-breadcrumbs">
+
         <div class="container">
             <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12">
 
-                    <ol class="breadcrumb mb-0" style="font-size: 12px;">
-                        <li class="breadcrumb-item">
-                            <a href="{{ makeLink("home") }}" >Trang chủ</a>
-                        </li>
-                        @foreach ($breadcrumbs as $item)
-                        @if ($loop->last)
-                        <li class="breadcrumb-item active "><a href="{{ makeLink($type,$item['id']??'',$item['slug']??'') }}">{{ $item['name'] }}</a></li>
-                        @else
-                        <li class="breadcrumb-item"><a href="{{ makeLink($type,$item['id']??'',$item['slug'])??'' }}">{{ $item['name'] }}</a></li>
-                        @endif
-
-                        @endforeach
-                    </ol>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumbs-item">
+                                <a href="{{ makeLink('home') }}">{{ __('home.home') }}</a>
+                            </li>
+                            @foreach ($breadcrumbs as $item)
+                            @if ($loop->last)
+                            <li class="breadcrumbs-item active"><a href="{{ makeLink($type,$item['id']??'',$item['slug']??'') }}" class="currentcat">{{ $item['name'] }}</a></li>
+                            @else
+                            <li class="breadcrumbs-item"><a href="{{ makeLink($type,$item['id']??'',$item['slug'])??'' }}" class="currentcat">{{ $item['name'] }}</a></li>
+                            @endif
+                            @endforeach
+                        </ul>
                 </div>
             </div>
         </div>
-    </div>
+</div>

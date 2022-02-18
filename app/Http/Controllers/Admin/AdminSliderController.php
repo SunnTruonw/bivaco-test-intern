@@ -11,14 +11,19 @@ use App\Traits\StorageImageTrait;
 use App\Traits\DeleteRecordTrait;
 use App\Http\Requests\Admin\ValidateAddSlider;
 use App\Http\Requests\Admin\ValidateEditSlider;
+use Illuminate\Support\Facades\Storage;
 class AdminSliderController extends Controller
 {
     //
     use StorageImageTrait,DeleteRecordTrait;
     private $slider;
+    private $langConfig;
+    private $langDefault;
     public function __construct(Slider $slider)
     {
         $this->slider = $slider;
+        $this->langConfig = config('languages.supported');
+        $this->langDefault = config('languages.default');
     }
     //
     public function index()
@@ -46,27 +51,37 @@ class AdminSliderController extends Controller
         try {
             DB::beginTransaction();
             $dataSliderCreate = [
-                "name" => $request->input('name'),
-                "slug" => $request->input('slug'),
-                "description" => $request->input('description'),
-                "active" => $request->input('active'),
+                "active" => $request->active,
+                'order'=>$request->order,
                 "admin_id" => auth()->guard('admin')->id()
             ];
-            $dataUploadImage = $this->storageTraitUpload($request, "image_path", "slider");
-            if (!empty($dataUploadImage)) {
-                $dataSliderCreate["image_path"] = $dataUploadImage["file_path"];
+            //   dd($dataSliderCreate);
+            $dataUploadAvatar = $this->storageTraitUpload($request, "image_path", "slider");
+            if (!empty($dataUploadAvatar)) {
+                $dataSliderCreate["image_path"] = $dataUploadAvatar["file_path"];
             }
 
-            // insert database in slider table
-            $this->slider->create($dataSliderCreate);
-
+            $slider = $this->slider->create($dataSliderCreate);
+            //  dd($slider);
+            // insert data product lang
+            $dataSliderTranslation = [];
+            foreach ($this->langConfig as $key => $value) {
+                $itemSliderTranslation = [];
+                $itemSliderTranslation['name'] = $request->input('name_' . $key);
+                $itemSliderTranslation['slug'] = $request->input('slug_' . $key);
+                $itemSliderTranslation['description'] = $request->input('description_' . $key);
+                $itemSliderTranslation['language'] = $key;
+                $dataSliderTranslation[] = $itemSliderTranslation;
+            }
+            //  dd($dataSliderTranslation);
+            $sliderTranslation =   $slider->translations()->createMany($dataSliderTranslation);
+             // dd($sliderTranslation);
             DB::commit();
-            return redirect()->route('admin.slider.create')->with("alert", "Thêm slider thành công");
+            return redirect()->route("admin.slider.index")->with("alert", "Thêm  thành công");
         } catch (\Exception $exception) {
-            //throw $th;
             DB::rollBack();
             Log::error('message' . $exception->getMessage() . 'line :' . $exception->getLine());
-            return redirect()->route('admin.slider.create')->with("error", "Thêm slider không thành công");
+            return redirect()->route('admin.slider.index')->with("error", "Thêm  không thành công");
         }
     }
     public function edit($id)
@@ -78,28 +93,46 @@ class AdminSliderController extends Controller
     }
     public function update(ValidateEditSlider $request, $id)
     {
-         try {
+        try {
             DB::beginTransaction();
             $dataSliderUpdate = [
-                "name" => $request->input('name'),
-                "slug" => $request->input('slug'),
-                "description" => $request->input('description'),
-                "active" => $request->input('active'),
+                "active" => $request->active,
+                'order'=>$request->order,
                 "admin_id" => auth()->guard('admin')->id()
             ];
-            $dataUploadImage = $this->storageTraitUpload($request, "image_path", "slider");
-            if (!empty($dataUploadImage)) {
-                $dataSliderUpdate["image_path"] = $dataUploadImage["file_path"];
+            //  dd($dataCategoryPostUpdate);
+
+            $dataUpdateAvatar = $this->storageTraitUpload($request, "image_path", "slider");
+            if (!empty($dataUpdateAvatar)) {
+                $path = $this->slider->find($id)->image_path;
+                if ($path) {
+                    Storage::delete($this->makePathDelete($path));
+                }
+                $dataSliderUpdate["image_path"] = $dataUpdateAvatar["file_path"];
             }
-            // insert database in product table
+
             $this->slider->find($id)->update($dataSliderUpdate);
+            $slider = $this->slider->find($id);
+            $dataSliderTranslationUpdate = [];
+            foreach ($this->langConfig as $key => $value) {
+                $itemSliderTranslationUpdate = [];
+                $itemSliderTranslationUpdate['name'] = $request->input('name_' . $key);
+                $itemSliderTranslationUpdate['slug'] = $request->input('slug_' . $key);
+                $itemSliderTranslationUpdate['description'] = $request->input('description_' . $key);
+                $itemSliderTranslationUpdate['language'] = $key;
+                if($slider->translationsLanguage($key)->first()){
+                    $slider->translationsLanguage($key)->first()->update($itemSliderTranslationUpdate);
+                }else{
+                    $slider->translationsLanguage($key)->create($itemSliderTranslationUpdate);
+                }
+            }
             DB::commit();
-            return redirect()->route('admin.slider.index')->with("alert", "Sửa slider thành công");
+            return redirect()->route("admin.slider.index")->with("alert", "Sửa  thành công");
         } catch (\Exception $exception) {
             //throw $th;
             DB::rollBack();
             Log::error('message' . $exception->getMessage() . 'line :' . $exception->getLine());
-            return redirect()->route('admin.slider.edit', ['id' => $id])->with("error", "Sửa slider không thành công");;
+            return redirect()->route('admin.slider.index')->with("error", "Sửa  không thành công");
         }
     }
     public function destroy($id)

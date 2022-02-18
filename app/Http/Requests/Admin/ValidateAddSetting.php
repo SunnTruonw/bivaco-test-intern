@@ -28,26 +28,31 @@ class ValidateAddSetting extends FormRequest
      */
     public function rules()
     {
-        return [
-            "name" => [
-                "required",
-                "min:3",
-                "max:250",
-                // Rule::unique("App\Models\Setting", 'name')->where(function ($query) {
-                //     return $query->where('deleted_at', null);
-                // })
-            ],
-            "value" =>   "nullable",
-            "slug" => [
-                "nullable",
-                // Rule::unique("App\Models\Setting", 'slug')->where(function ($query) {
-                //     return $query->where('deleted_at', null);
-                // })
-            ],
-            //"description"=>"required",
+        $rule=[
+            "value" => "nullable",
+            "order"=>"nullable|numeric",
+            // "description"=>"required",
+            "image_path"=>"mimes:jpeg,jpg,png,svg|nullable|file|max:3000",
             "active" => "required",
-            "checkrobot" => "accepted"
+            // "checkrobot" => "accepted"
         ];
+        $langConfig=config('languages.supported');
+        $langDefault=config('languages.default');
+
+        foreach ($langConfig as $key => $value) {
+            $arrConlai=$langConfig;
+            unset($arrConlai[$key]);
+            $keyConlai = array_keys($arrConlai);
+            $keyConlai= collect($keyConlai);
+
+            $stringKey = $keyConlai->map(function ($item, $key) {
+                return "name_".$item;
+            });
+            $stringKey= $stringKey->implode(', ');
+            $rule['name_'.$key]="required|min:3|max:250";
+            $rule['slug_'.$key]="nullable|min:3|max:250";
+        }
+        return $rule;
     }
     public function messages()
     {

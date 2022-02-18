@@ -13,7 +13,8 @@ class Cart {
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, next step!'
+            confirmButtonText: 'Tiếp tục',
+            cancelButtonText: 'Bỏ qua'
         }
         $.ajax({
             type: "GET",
@@ -63,9 +64,9 @@ class Cart {
                 if (data.code === 200) {
                     $('.cart-wrapper').html(data.htmlcart);
                     $('#total-price-cart').text(data.totalPrice);
-                    alert('add to cart success');
+                    alert('Update giỏ hàng thành công');
                 } else {
-                    alert('add to cart error');
+                    alert('Update giỏ hàng không thành công');
                 }
             },
             error: function() {

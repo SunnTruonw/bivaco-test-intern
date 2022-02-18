@@ -15,8 +15,9 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->bigIncrements("id");
-            $table->string("name",255);
-            $table->string("slug",255);
+            //   $table->string("name",255);
+            //   $table->string("slug",255);
+            $table->string("masp", 255)->unique()->nullable();
             $table->integer("price")->nullable();
             $table->tinyInteger("sale")->default(0);
             $table->tinyInteger("hot")->default(0);
@@ -24,16 +25,20 @@ class CreateProductsTable extends Migration
             $table->tinyInteger("number")->default(0)->nullable();
             $table->integer("warranty")->nullable();
             $table->integer("view")->default(0)->nullable();
-            $table->text("description")->nullable();
-            $table->string("avatar_path",255)->nullable();
-            $table->string("description_seo",255)->nullable();
-            $table->string("title_seo",255)->nullable();
-            $table->longText("content")->nullable();
+
+            $table->string("avatar_path", 255)->nullable();
+            // file
+            $table->string("file", 255)->nullable();
+            $table->string("file2", 255)->nullable();
+            $table->string("file3", 255)->nullable();
+            //end file
+
+            $table->bigInteger('order')->nullable();
             $table->tinyInteger("active")->default(1);
             $table->bigInteger("category_id")->unsigned();
             //  $table->foreign('category_id')->references('id')->on('categoriesproduct')->onDelete('cascade');
-            $table->bigInteger("suppiler_id")->unsigned();
-            //  $table->foreign('suppiler_id')->references('id')->on('categoriesarticles')->onDelete('cascade');
+            $table->bigInteger("supplier_id")->unsigned();
+            //  $table->foreign('supplier_id')->references('id')->on('categoriesarticles')->onDelete('cascade');
             $table->bigInteger("admin_id")->unsigned();
             //  $table->foreign('author_id')->references('id')->on('admins')->onDelete('cascade');
             $table->timestamps();

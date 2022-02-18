@@ -27,7 +27,11 @@ class CreateTransactionsTable extends Migration
             $table->bigInteger("district_id")->unsigned();
             $table->bigInteger("commune_id")->unsigned();
             $table->string("address_detail",255)->nullable();
+            $table->float('point',10,2)->unsigned();
+            $table->bigInteger('money')->unsigned();
+            $table->string("code",255)->unique();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

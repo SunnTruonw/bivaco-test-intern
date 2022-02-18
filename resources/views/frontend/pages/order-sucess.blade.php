@@ -28,7 +28,7 @@
             font-weight: bold;
         }
         .order-content{
-            padding: 10px 30px;
+            padding: 10px 0px;
         }
         .order-content .infor-order{}
         .thank-you{}
@@ -104,9 +104,7 @@
                                             <ul class="list-infor">
                                                 <li><span>Người nhận hàng </span> {{ $data->name }}</li>
                                                 <li><span>Giao đến </span> {{ $data->address_detail }}, {{ $data->commune->name }}, {{ $data->district->name }}, {{ $data->city->name }} (nhân viên sẽ gọi xác nhận trước khi giao).</li>
-                                                <li class="total-price"><span>Tổng tiền </span> {{ number_format($data->total) }}</li>
-                                                <li class="total-price"><span>Tri trả bằng tiền </span> {{ number_format($data->money) }} {{ $unit }}</li>
-                                                <li class="total-price"><span>Tri trả bằng điểm </span> {{ number_format($data->point) }} {{ $pointUnit }}</li>
+                                                <li class="total-price"><span>Tổng tiền </span> {{ number_format($data->total) }} {{ $unit??'đ' }}</li>
                                             </ul>
                                           <div class="list-order-product pt-4 pb-4">
                                             <div class="title-order  mb-3">
@@ -115,7 +113,7 @@
                                             <div class="row">
                                                 @foreach ($data->products as $productItem)
 
-                                                <div class="col-md-6 col-sm-6 col-xs-6 mb-2">
+                                                <div class="col-md-6 col-sm-6 col-xs-6">
                                                     <div class="order-item">
                                                         <div class="media p-0">
                                                             <div class="image position-relative">

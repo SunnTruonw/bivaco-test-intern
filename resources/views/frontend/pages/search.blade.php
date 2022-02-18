@@ -22,40 +22,46 @@
                             @isset($dataProduct)
                                 @if ($dataProduct)
                                     @if ($dataProduct->count())
-                                    <h3 class="title-template-news">Kết quả tìm kiếm sản phẩm  </h3>
+                                    <h3 class="title-template">Kết quả tìm kiếm </h3>
                                     <div class="wrap-list-product">
                                         <div class="list-product-card">
                                             <div class="row">
-                                                @foreach($dataProduct as $product)
-                                                <div class="col-md-4 col-sm-4 col-xs-6">
-                                                    <div class="product-card">
+                                                @foreach ($dataProduct as $product)
+                                                @php
+                                                    $tran=$product->translationsLanguage()->first();
+                                                    $link=$product->slug_full;
+                                                @endphp
+                                                <div class="col-12 col-product-item col-lg-3 col-md-4 col-sm-6 col-12">
+                                                    <div class="product-item">
                                                         <div class="box">
-                                                            <div class="card-top">
-                                                                <div class="image">
-                                                                    <a href="{{ route('product.detail',['id'=>$product->id,'slug'=>$product->slug]) }}">
-                                                                        <img src="{{ asset($product->avatar_path) }}" alt="Sofa phòng khách SF08" class="image-card image-default">
-                                                                    </a>
-                                                                    @if ($product->sale)
-                                                                    <span class="sale-1">-{{ $product->sale }}%</span>
+                                                            <div class="image">
+                                                                <a href="{{ $link }}">
+                                                                    <img src="{{ asset($product->avatar_path) }}" alt="{{ $tran->name }}">
+                                                                    @if ($product->old_price)
+                                                                    <span class="sale"> {{  ceil(100 - ($product->old_price/$product->price)*100)." %"}}</span>
                                                                     @endif
 
-                                                                </div>
-                                                                <ul class="list-quick">
-                                                                    <li class="quick-view">
-                                                                        <a href="{{ route('product.detail',['id'=>$product->id,'slug'=>$product->slug]) }}"><i class="fa fa-eye" aria-hidden="true"></i></a>
-                                                                    </li>
-                                                                    <li class="cart quick-cart">
-                                                                        <a class="add-to-cart" data-url="{{ route('cart.add',['id' => $product->id,]) }}"><i class="fas fa-cart-plus"></i></a>
-                                                                     </li>
-                                                                </ul>
-                                                            </div>
-                                                            <div class="card-body">
-                                                                <h4 class="card-name"><a href="{{ route('product.detail',['id'=>$product->id,'slug'=>$product->slug]) }}">{{ $product->name }}</a></h4>
-                                                                <div class="card-price">
-                                                                    <span class="new-price">{{ $product->price_after_sale }} {{ $unit  }}</span>
-                                                                    @if ($product->sale>0)
-                                                                    <span class="old-price">{{ $product->price }} {{ $unit  }}</span>
+                                                                    @if($product->baohanh)
+                                                                        <div class="km">
+                                                                            {{ $product->baohanh }}
+                                                                        </div>
                                                                     @endif
+                                                                </a>
+                                                            </div>
+                                                            <div class="content">
+                                                                <h3>
+                                                                    <a href="{{ $link }}">
+                                                                       {{ $tran->name }}
+                                                                    </a>
+                                                                </h3>
+                                                                <div class="box-price">
+                                                                    <span class="new-price">Giá: {{ $product->price?number_format($product->price)." ".$unit:"Liên hệ" }}</span>
+                                                                    @if ($product->old_price>0)
+                                                                        <span class="old-price">{{ number_format($product->old_price) }} {{ $unit  }}</span>
+                                                                    @endif
+                                                                </div>
+                                                                <div class="dathang">
+                                                                    <a class="add-to-cart" data-url="{{ route('cart.add',['id' => $product->id]) }}">Đặt hàng ngay</a>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -76,11 +82,11 @@
                             @endisset
 
                         </div>
-                        <div class="col-lg-12 col-sm-12">
+                        {{-- <div class="col-lg-12 col-sm-12">
                             @isset($dataPost)
                                 @if ($dataPost)
                                     @if ($dataPost->count())
-                                        <h3 class="title-template-news">Kết quả tìm kiếm tin tức</h3>
+                                        <h3 class="title-template-news">{{ __('search.ket_qua_tim_kiem_tin_tuc') }}</h3>
                                         <div class="list-news">
                                             <div class="row">
                                                 @foreach ($dataPost as $post)
@@ -90,7 +96,7 @@
                                                             <a href="{{ makeLink("post",$post->id,$post->slug) }}"><img src="{{ asset($post->avatar_path) }}" alt="{{ $post->name }}"></a>
                                                         </div>
                                                         <h3><a href="{{ makeLink("post",$post->id,$post->slug) }}">{{ $post->name }}</a></h3>
-                                                        <div class="date">{{ date_format($post->updated_at,"d/m/Y")}} - Admin Bivaco</div>
+                                                        <div class="date">{{ date_format($post->updated_at,"d/m/Y")}} - Admin</div>
                                                         <div class="desc">
                                                             {!! $post->description  !!}
                                                         </div>
@@ -106,7 +112,7 @@
                                     @endif
                                 @endif
                             @endisset
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>

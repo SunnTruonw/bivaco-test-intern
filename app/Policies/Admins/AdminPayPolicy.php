@@ -20,7 +20,6 @@ class AdminPayPolicy
         return $user->CheckPermissionAccess(config('permissions.access.pay-add'));
     }
     public function edit(Admin $user){
-
         return $user->CheckPermissionAccess(config('permissions.access.pay-edit'));
     }
     public function payUpdateDrawPoint(Admin $user){
@@ -31,5 +30,9 @@ class AdminPayPolicy
     {
         return $user->CheckPermissionAccess(config('permissions.access.pay-delete'));
     }
-
+    public function exportExcel(Admin $user)
+    {
+     //   dd($user->CheckPermissionAccess(config('permissions.access.pay-export-excel')));
+        return $user->CheckPermissionAccess(config('permissions.access.pay-export-excel'));
+    }
 }

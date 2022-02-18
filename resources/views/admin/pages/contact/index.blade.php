@@ -21,19 +21,19 @@ table{
                         <div class="list-count">
                             <div class="row">
                                 @foreach ($dataContactGroupByStatus as $item)
-                                <div class="col-md-3 col-sm-6 col-12">
-                                    <div class="info-box">
-                                       <span class="info-box-icon bg-info"><i class="fas fa-calculator"></i></span>
-                                       <div class="info-box-content">
-                                          <span class="info-box-text">Số giao dịch {{ $item['name'] }} </span>
-                                          <span class="info-box-number"><strong>{{ number_format($item['total']??0) }}</strong> / tổng số {{ $totalContact }}</span>
-                                       </div>
-                                       <!-- /.info-box-content -->
-                                    </div>
-                                    <!-- /.info-box -->
-                                 </div>
-                                @endforeach
 
+                                @if ($item['status']!=-1)
+                                    <div class="col-md-3 col-sm-6 col-12">
+                                        <div class="info-box">
+                                        <span class="info-box-icon bg-info"><i class="fas fa-calculator"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Số liên hệ {{ $item['name'] }} </span>
+                                            <span class="info-box-number"><strong>{{ number_format($item['total']??0) }}</strong> / tổng số {{ $totalContact }}</span>
+                                        </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                @endforeach
                             </div>
                         </div>
                    </div>
@@ -44,13 +44,11 @@ table{
                               <div class="card-tools w-60">
                                   <form action="{{ route('admin.contact.index') }}" method="GET">
                                     <div class="row">
-                                        <div class="col-md-9">
+                                        <div class="col-md-8">
                                             <div class="row">
                                                 <div class="form-group col-md-4 mb-0">
                                                     <input id="keyword" value="{{ $keyword }}" name="keyword" type="text" class="form-control" placeholder="Từ khóa">
-                                                    <div id="keyword_feedback" class="invalid-feedback">
-
-                                                    </div>
+                                                    <div id="keyword_feedback" class="invalid-feedback"></div>
                                                 </div>
                                                 <div class="form-group col-md-4 mb-0" style="min-width:100px;">
                                                     <select id="order" name="order_with" class="form-control">
@@ -71,9 +69,9 @@ table{
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 text-right">
-                                            <button type="submit" class="btn btn-success">Search</button>
-                                            <a href="{{ route('admin.contact.index') }}" class="btn btn-danger">Reset</a>
+                                        <div class="col-md-4 text-right">
+                                            <button type="submit" class="btn btn-success">Tìm kiếm</button>
+                                            <a href="{{ route('admin.contact.index') }}" class="btn btn-danger">Làm lại</a>
                                         </div>
 
                                     </div>
@@ -81,24 +79,18 @@ table{
 
                               </div>
                            </div>
-                           <div class="card-tools text-right pl-3 pr-3 pt-2 pb-2">
-                            <div class="count">
-                                Tổng số bản ghi <strong>{{  $data->count() }}</strong> / {{ $totalContact }}
-                             </div>
-                          </div>
                            <!-- /.card-header -->
                            <div class="card-body table-responsive p-0">
                               <table class="table table-head-fixed">
                                  <thead>
                                     <tr>
-                                       <th>ID</th>
-                                       <th class="text-nowrap">Thông tin</th>
-                                       <th class="text-nowrap">Acount</th>
-                                       <th class="text-nowrap">Trạng thái</th>
-                                       <th class="text-nowrap">Địa chỉ</th>
-                                       <th class="text-nowrap">Nội dung</th>
-                                       <th>Thời gian</th>
-                                       <th>Action</th>
+                                       <th style="background: #eee;">ID</th>
+                                       <th class="text-nowrap" style="background: #eee;">Thông tin</th>
+                                       <th class="text-nowrap" style="background: #eee;">Tài khoản</th>
+                                       <th class="text-nowrap" style="background: #eee;">Trạng thái</th>
+                                       <th class="text-nowrap" style="background: #eee;">Nội dung</th>
+                                       <th class="text-nowrap" style="background: #eee;">Thời gian</th>
+                                       <th class="text-nowrap" style="background: #eee;">Tình trạng</th>
                                     </tr>
                                  </thead>
                                  <tbody>
@@ -108,15 +100,19 @@ table{
                                          <td>
                                              <ul>
                                                  <li>
-                                                   <strong>Name:</strong>  {{ $contact->name }}
+                                                   <strong>Tên:</strong>  {{ $contact->name }}
                                                  </li>
                                                  <li>
                                                     <strong>Email:</strong>   {{ $contact->email }}
                                                  </li>
                                                  <li>
-                                                  <strong>Phone:</strong>   {{ $contact->phone }}
+                                                  <strong>Điện thoại:</strong>   {{ $contact->phone }}
                                                  </li>
-
+                                                 @if($contact->address_detail)
+                                                 <li>
+                                                  <strong>Địa chỉ:</strong>   {{ $contact->address_detail }}
+                                                 </li>
+                                                 @endif
                                              </ul>
                                          </td>
                                          <td class="text-nowrap">{{ $contact->user_id?'Thành viên':'Khách vãng lai' }}</td>
@@ -126,20 +122,8 @@ table{
                                                 'listStatus'=>$listStatus,
                                             ])
                                          </td>
-                                         <td class="text-nowrap">
-                                            <ul>
-                                                @if ($contact->city_id&&$contact->district_id&&$contact->commune_id)
-                                                    <li> <strong>Tỉnh:</strong> {{ $contact->city->name }}</li>
-                                                    <li><strong>Quận:</strong>  {{  $contact->district->name}}</li>
-                                                    <li><strong>Phường/xã:</strong>    {{  $contact->commune->name }} </li>
-                                                @endif
-                                                @if ($contact->address_detail )
-                                                    <li> <strong>Địa chỉ</strong> {{ $contact->address_detail }}</li>
-                                                @endif
-                                            </ul>
-                                        </td>
 
-                                         <td class="text-nowrap"> {{ $contact->content }} </td>
+                                         <td class="text-nowrap"> {!! $contact->content !!} </td>
                                          <td class="text-nowrap"> {{ date_format($contact->created_at,"d/m/Y") }} </td>
                                          <td>
                                              <a  class="btn btn-sm btn-info" id="btn-load-transaction-detail" data-url="{{route('admin.contact.detail',['id'=>$contact->id])}}" ><i class="fas fa-eye"></i></a>
@@ -152,6 +136,12 @@ table{
                               </table>
                            </div>
                            <!-- /.card-body -->
+
+                           <div class="card-tools text-right pl-3 pr-3 pt-2 pb-2">
+                            <div class="count">
+                                Tổng số bản ghi <strong>{{  $data->count() }}</strong> / {{ $totalContact }}
+                             </div>
+                          </div>
                         </div>
                      </div>
                      <div class="col-md-12">

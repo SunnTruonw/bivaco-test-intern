@@ -27,44 +27,99 @@ class ValidateEditProduct extends FormRequest
      */
     public function rules()
     {
-        return [
+        $id=request()->route()->parameter('id');
+
+        $rule=[
+
             "masp"=>[
                 "required",
                 "min:3",
                 "max:250",
-                Rule::unique("App\Models\Product", 'masp')->where(function ($query) {
-                    $id=request()->route()->parameter('id');
-                    return $query->where([
-                        ['deleted_at', null],
-                        ['id','<>',$id],
-                    ]);
-                })
+                Rule::unique("App\Models\Product", 'masp')->ignore($id),
             ],
-            "name" => "required|min:3|max:250",
-            "slug" => [
-                "required",
-                Rule::unique("App\Models\Product", 'slug')->where(function ($query) {
-                    $id=request()->route()->parameter('id');
-                    return $query->where([
-                        ['deleted_at', null],
-                        ['id','<>',$id],
-                    ]);
-                })
-            ],
-            "icon" => "mimes:jpeg,jpg,png,svg|nullable",
-            "price" => "nullable",
-            "sale" => "nullable",
-            // "hot"=>"required",
-            // "pay"=>"required",
-            // "number"=>"required",
-            "warranty" => "nullable",
-           // "view" => "required",
 
-            "avatar" => "mimes:jpeg,jpg,png,svg|nullable",
-            "category_id" => 'exists:App\Models\CategoryProduct,id',
-            "active" => "required",
-            "checkrobot" => "accepted"
+            "price"=>"nullable|numeric",
+            "size"=>"nullable|string|min:1|max:191",
+            "sale"=>"nullable|numeric",
+            "file"=>"nullable|file|max:5000",
+            "file2"=>"nullable|file|max:5000",
+            "file3"=>"nullable|string|min:1|max:191",
+
+           // "hot"=>"required",
+             // "pay"=>"required",
+             // "number"=>"required",
+            "warranty"=>"nullable",
+            // "view"=>"required",
+            "order"=>"nullable|numeric",
+            "avatar_path"=>"mimes:jpeg,jpg,png,svg|nullable|file|max:3000",
+            "image_path.*"=>"mimes:jpeg,jpg,png,svg|nullable|file|max:3000",
+            "category_id"=>'exists:App\Models\CategoryProduct,id',
+            "supplier_id"=>'nullable|exists:App\Models\Supplier,id',
+            "active"=>"required",
+          //  "checkrobot"=>"accepted"
         ];
+        $langConfig=config('languages.supported');
+        $langDefault=config('languages.default');
+
+        foreach ($langConfig as $key => $value) {
+            $arrConlai=$langConfig;
+            unset($arrConlai[$key]);
+            $keyConlai = array_keys($arrConlai);
+            $keyConlai= collect($keyConlai);
+
+            $stringKey = $keyConlai->map(function ($item, $key) {
+                return "slug_".$item;
+            });
+            $stringKey= $stringKey->implode(', ');
+
+            $idPro=request()->route()->parameter('id');
+            $pro=\App\Models\Product::find($idPro)->translationsLanguage($key)->first();
+            $id=optional($pro)->id;
+
+            $rule['name_'.$key]="required|min:3|max:250";
+            $rule['slug_'.$key]=[
+                "required",
+                'different:'.$stringKey,
+                Rule::unique("App\Models\ProductTranslation", 'slug')->ignore($id, 'id'),
+            ];
+
+            $rule['title_seo_'.$key]="nullable|min:1|max:191";
+            $rule['description_seo_'.$key]="nullable|min:1|max:191";
+            $rule['keyword_seo_'.$key]="nullable|min:1|max:191";
+
+            $rule['model_'.$key]=[
+                "nullable",
+                "min:1",
+                "max:191",
+            ];
+            $rule['tinhtrang_'.$key]=[
+                "nullable",
+                "min:1",
+                "max:191",
+            ];
+            $rule['baohanh_'.$key]=[
+                "nullable",
+                "min:1",
+                "max:191",
+            ];
+            $rule['xuatsu_'.$key]=[
+                "nullable",
+                "min:1",
+                "max:191",
+            ];
+        }
+
+        $priceOption = request()->input('priceOption') ?? [];
+        foreach ($priceOption as $key => $value) {
+                $rule['priceOption.' . $key] = 'required_with:sizeOption.'. $key;
+                $rule['sizeOption.' . $key] = 'required_with:priceOption.'. $key;
+        }
+        $priceOption = request()->input('priceOptionOld') ?? [];
+        foreach ($priceOption as $key => $value) {
+                $rule['priceOptionOld.' . $key] = 'required_with:sizeOptionOld.'. $key;
+                $rule['sizeOptionOld.' . $key] = 'required_with:priceOptionOld.'. $key;
+        }
+        return $rule;
     }
     public function messages()
     {

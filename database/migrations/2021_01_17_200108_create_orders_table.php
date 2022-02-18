@@ -16,14 +16,17 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->tinyInteger("quantity");
+            $table->string("name",255);
             $table->float("new_price",10,2);
             $table->float("old_price",10,2)->nullable();
             $table->tinyInteger("sale")->nullable();
             $table->dateTime("warranty")->nullable();
+            $table->string("avatar_path",255)->nullable();
             $table->bigInteger("transaction_id")->unsigned();
             $table->bigInteger("product_id")->unsigned();
             // $table->integer("customer_id")->unsigned();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

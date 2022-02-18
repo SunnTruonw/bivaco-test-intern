@@ -9,48 +9,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title> @yield('title') </title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta http-equiv="Content-Language" content="vi" />
     <meta name="keywords" content="@yield('keywords')" />
     <meta name="description" content="@yield('description')" />
     <meta name="abstract" content="@yield('abstract')" />
     <meta name="ROBOTS" content="Metaflow" />
     <meta name="ROBOTS" content="noindex, nofollow, all" />
-    <meta name="AUTHOR" content="Phan văn tân" />
+    <meta name="AUTHOR" content="Bivaco" />
     <meta name="revisit-after" content="1 days" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta property="og:image" content="@yield('image')" />
-    <meta property="og:url" content="{{ makeLink("home") }}" />
-    <link rel="canonical" href="{{ makeLink("home") }}" />
-    <link rel="shortcut icon" href="../favicon.ico" />
+    <meta property="og:image:alt" content="@yield('image')" />
+	<meta name="google-site-verification" content="Rp0rKQX7aGO3qmBXosgmP6JK5pMpvmywzagSB1rqxpA" />
 
-
-
-
-
-    <!--
-    <link rel="stylesheet" href="{linkhost}/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="{linkhost}/css/lightbox.min.css" type="text/css" />
-    <link rel="stylesheet" href="{linkhost}/css/animate.css" type="text/css" />
-    <link href="{linkhost}/css/slick.css" rel="stylesheet" />
-    <link href="{linkhost}/css/slick-theme.css" rel="stylesheet" />
-    <link rel="stylesheet" href="{linkhost}/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-    -->
-
-    <!--
-    <link rel="stylesheet" href="{linkhost}/css/stylesheet-2.css" type="text/css" />
-    <link rel="stylesheet" href="{linkhost}/css/header.css" type="text/css" />
-    <link rel="stylesheet" href="{linkhost}/css/footer.css" type="text/css" />
-    <link rel="stylesheet" href="{linkhost}/css/cart.css" type="text/css" />
-    -->
-
-
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <!-- Font Awesome Icons -->
+    <meta property="og:url" content="{{ makeLink('home') }}" />
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="@yield('title')">
+    <meta property="og:description" content="@yield('description')">
+    <link rel="canonical" href="{{ makeLink('home') }}" />
+    <link rel="shortcut icon" href="{{URL::to('/favicon.ico')}}" />
+    <script type="text/javascript" src="{{ asset('lib/jquery/jquery-3.2.1.min.js') }} "></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <link rel="stylesheet" type="text/css" href="{{ asset('lib/bootstrap-4.5.3-dist/css/bootstrap.min.css') }}">
-
     {{-- <link rel="stylesheet" type="text/css" href="{{ asset('font/fontawesome-5.13.1/css/all.min.css') }}"> --}}
     <link rel="stylesheet" type="text/css" href="{{ asset('font/fontawesome-5.13.1/css/all.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('lib/wow/css/animate.css') }}">
@@ -58,14 +39,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" type="text/css" href="{{ asset('lib/slick-1.8.1/css/slick-theme.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('lib/lightbox-plus/css/lightbox.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('frontend/css/reset.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('frontend/css/stylesheet.css') }}">
+     {{-- <link rel="stylesheet" type="text/css" href="{{ asset('frontend/css/stylesheet.css') }}"> --}}
+    <link rel="stylesheet" type="text/css" href="{{ asset('frontend/css/stylesheet-2.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('frontend/css/header.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('frontend/css/footer.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('frontend/css/cart.css') }}">
 
     @yield('css')
 </head>
 
 <body class="template-search">
     <div class="wrapper home">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        {{-- <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
@@ -95,7 +80,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     {{-- @if (Auth::guard('admin')->check())
                                     {{ Auth::guard('admin')->user()->name }}
                                     @else --}}
-                                    @if(Auth::guard('web')->check())
+                                    {{-- @if(Auth::guard('web')->check())
                                     {{ Auth::guard()->user()->name }}
                                     @endif
                                 </a>
@@ -109,7 +94,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                      {{ __('Logout') }}
                                      </a>
                                     <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" class="d-none"> --}}
-                                    @if(Auth::guard('web')->check())
+                                    {{-- @if(Auth::guard('web')->check())
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                     onclick="event.preventDefault();
                                                   document.getElementById('logout-form').submit();">
@@ -126,7 +111,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     </ul>
                 </div>
             </div>
-        </nav>
+        </nav> --}}
         <!-- Navbar -->
         @include('frontend.partials.header')
         <!-- /.navbar -->
@@ -137,23 +122,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 
     </div>
-    <!-- ./wrapper -->
-
-    <!-- REQUIRED SCRIPTS -->
-
-    <!-- jQuery -->
-    <script type="text/javascript" src="{{ asset('lib/jquery/jquery-3.2.1.min.js') }} "></script>
-
     <script type="text/javascript" src="{{ asset('lib/lightbox-plus/js/lightbox-plus-jquery.min.js') }}"></script>
-
-    <!-- Bootstrap 4 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script type="text/javascript" src="{{ asset('lib/bootstrap-4.5.3-dist/js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('lib/wow/js/wow.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('lib/slick-1.8.1/js/slick.min.js') }}"></script>
     <script src="{{asset('lib/sweetalert2/js/sweetalert2.all.min.js')}}"></script>
     <script type="text/javascript" src="{{ asset('frontend/js/main.js') }}"></script>
     <script src="{{ asset('lib/components/js/Cart.js') }}"></script>
+    <script src="{{ asset('lib/components/js/Compare.js') }}"></script>
+    <script>
+        new WOW().init();
+        $(function() {
+            $(document).on('click','.pt_icon_right',function(){
+                event.preventDefault();
+                $(this).parent('a').parent('li').children("ul").slideToggle();
+                $(this).parent('a').parent('li').toggleClass('active');
+            });
+            $(document).on('click','.btn-sb-toogle',function(){
+                $(this).parents('.box-list-fill').find('.fill-list-item').slideToggle();
+                $(this).toggleClass('active');
+            });
+        })
+    </script>
+    
     @yield('js')
-</body>
 
+</body>
 </html>

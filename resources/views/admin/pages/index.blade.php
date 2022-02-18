@@ -2,6 +2,11 @@
 @section('css')
 <link rel="stylesheet" href="{{asset('lib/char\js\Chart.min.css')}}">
 <style>
+	body {
+		font-family: 'Open Sans', sans-serif;
+		background-color: #fff!important;
+	}
+	@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap');
     /* width */
 ::-webkit-scrollbar {
   width: 5px;
@@ -24,103 +29,69 @@
 ul{
     padding-left: 20px;
 }
-.badge-1{
-background: #dc3545;
-}
-.badge-1{
-background: #c3e6cb;
-}
-.badge-2{
-    background: #ffc107;
-}
-.badge-3{
-    background: #17a2b8;
-}
-.badge-4{
-    background: #28a745;
-}
+
 .status>span{
     cursor: pointer;
 }
+.card {
+    box-shadow: 0 0 0px rgb(0 0 0 / 13%), 0 0px 0px rgb(0 0 0 / 20%);
+    margin-bottom: 1rem;
+	background: #f4f6f9;
+}
+.content-wrapper>.content {
+    padding: 25px .5rem;
+	margin: 0 !important;
+}
+	.navbar {
+		padding: 13px 0;
+	}
+	.card-body {
+		background: #fff;
+	}
+	ul {
+		padding-left: 0px;
+		margin-bottom: 0;
+	}
+	.card-header {
+		background: #333;
+	}
+	.card-title {
+		float: left;
+		color: #fff;
+		font-size: 1.1rem;
+		font-weight: 600;
+		margin: 0;
+	}
+    .list-news-home{
+
+    }
+    .list-news-home li a{
+
+    }
 </style>
 @endsection
 @section('title',"Trang chủ admin")
 @section('content')
-<!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-   <!-- Content Header (Page header) -->
    {{-- <div class="content-header">
       <div class="container-fluid">
          <div class="row mb-2">
             <div class="col-sm-6">
                <h1 class="m-0">Starter Page</h1>
             </div>
-            <!-- /.col -->
             <div class="col-sm-6">
                <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="#">Home</a></li>
                   <li class="breadcrumb-item active">Starter Page</li>
                </ol>
             </div>
-            <!-- /.col -->
          </div>
-         <!-- /.row -->
       </div>
-      <!-- /.container-fluid -->
    </div> --}}
-   <!-- /.content-header -->
-   <!-- Main content -->
    <div class="content mt-3">
       <div class="container-fluid">
          <div class="row">
-            <div class="col-md-3 col-sm-6 col-12">
-               <div class="info-box">
-                  <span class="info-box-icon bg-info"><i class="fas fa-cart-plus"></i></span>
-                  <div class="info-box-content">
-                     <span class="info-box-text">Tổng số đơn hàng</span>
-                     <span class="info-box-number">{{ number_format($totalTransaction) }}</span>
-                  </div>
-                  <!-- /.info-box-content -->
-               </div>
-               <!-- /.info-box -->
-            </div>
-            <div class="col-md-3 col-sm-6 col-12">
-               <div class="info-box">
-                  <span class="info-box-icon bg-success"><i class="fas fa-users"></i></span>
-                  <div class="info-box-content">
-                     <span class="info-box-text">Thành viên</span>
-                     <span class="info-box-number">{{ number_format($totalMember) }}</span>
-                  </div>
-                  <!-- /.info-box-content -->
-               </div>
-               <!-- /.info-box -->
-            </div>
-            <div class="col-md-3 col-sm-6 col-12">
-               <div class="info-box">
-                  <span class="info-box-icon bg-warning"><i class="fas fa-newspaper"></i></span>
-                  <div class="info-box-content">
-                     <span class="info-box-text">Sản phẩm</span>
-                     <span class="info-box-number">{{number_format($totalProduct)}}</span>
-                  </div>
-                  <!-- /.info-box-content -->
-               </div>
-               <!-- /.info-box -->
-            </div>
-            <div class="col-md-3 col-sm-6 col-12">
-               <div class="info-box">
-                  <span class="info-box-icon bg-danger"><i class="far fa-newspaper"></i></span>
-                  <div class="info-box-content">
-                     <span class="info-box-text">Bài viết</span>
-                     <span class="info-box-number">{{number_format($totalPost)}}</span>
-                  </div>
-                  <!-- /.info-box-content -->
-               </div>
-               <!-- /.info-box -->
-            </div>
-         </div>
-         <div class="row">
-            <!-- /.col (LEFT) -->
-            <div class="col-md-8">
+			 <div class="col-md-8" style="display: none">
                <!-- LINE CHART -->
                <div class="card card-info">
                   <div class="card-header">
@@ -143,9 +114,81 @@ background: #c3e6cb;
                </div>
                <!-- /.card -->
             </div>
-            <!-- /.col (RIGHT) -->
+            <div class="col-md-12">
+
+				 <div class="row">
+					 <div class="col-md-12 card card-info">
+						 <div class="card-header">
+							 <h3 class="card-title">Thống kê chung</h3>
+							 <div class="card-tools">
+								<button type="button" class="btn btn-tool" data-card-widget="collapse">
+								<i class="fas fa-minus"></i>
+								</button>
+								<button type="button" class="btn btn-tool" data-card-widget="remove">
+								<i class="fas fa-times"></i>
+								</button>
+							 </div>
+						  </div>
+					 </div>
+					<div class="col-md-3 col-sm-6 col-12">
+					   <div class="info-box">
+						  <span class="info-box-icon bg-warning"><i class="fas fa-newspaper"></i></span>
+						  <div class="info-box-content">
+							 <span class="info-box-text">Bài Viết Dịch vụ</span>
+							 <span class="info-box-number">{{number_format($totalProduct)}}</span>
+						  </div>
+					   </div>
+					</div>
+					<div class="col-md-3 col-sm-6 col-12">
+					   <div class="info-box">
+						  <span class="info-box-icon bg-danger"><i class="far fa-newspaper"></i></span>
+						  <div class="info-box-content">
+							 <span class="info-box-text">Bài viết Tin tức</span>
+							 <span class="info-box-number">{{number_format($totalPost)}}</span>
+						  </div>
+					   </div>
+					</div>
+					<div class="col-md-3 col-sm-6 col-12">
+					   <div class="info-box">
+						  <span class="info-box-icon bg-info"><i class="fas fa-cart-plus"></i></span>
+						  <div class="info-box-content">
+							 <span class="info-box-text">Thông tin liên hệ/ Báo Giá</span>
+							 <span class="info-box-number">{{ number_format($countContact) }}</span>
+						  </div>
+					   </div>
+					</div>
+					<div class="col-md-3 col-sm-6 col-12">
+					   <div class="info-box">
+						  <span class="info-box-icon bg-success"><i class="fas fa-users"></i></span>
+						  <div class="info-box-content">
+							 <span class="info-box-text">Khách đang truy câp</span>
+							 <span class="info-box-number">1</span>
+						  </div>
+					   </div>
+					</div>
+				 </div>
+               <!--<div class="card card-info">
+                  <div class="card-header">
+                     <h3 class="card-title">Biểu đồ doanh thu các ngày trong tháng</h3>
+                     <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                        <i class="fas fa-times"></i>
+                        </button>
+                     </div>
+                  </div>
+                  <div class="card-body">
+                     <div class="chart">
+                        <canvas id="lineChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                     </div>
+                  </div>
+               </div>-->
+            </div>
+            <!--
             <div class="col-md-4">
-               <!-- PIE CHART -->
+               <!-- PIE CHART
                <div class="card card-danger">
                   <div class="card-header">
                      <h3 class="card-title">Thống kê trạng thái đơn hàng</h3>
@@ -161,90 +204,54 @@ background: #c3e6cb;
                   <div class="card-body">
                      <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                   </div>
-                  <!-- /.card-body -->
+                  <!-- /.card-body
                </div>
-               <!-- /.card -->
-            </div>
+               <!-- /.card
+            </div>-->
          </div>
-         <div class="row">
-            <div class="col-md-9">
+		  <div class="row">
+            <div class="col-md-6">
                <div class="card card-outline card-primary">
                   <div class="card-header">
-                     <h3 class="card-title">Danh sách đơn hàng mới</h3>
+                     <h3 class="card-title">10 Tin tức thêm gần đây</h3>
                   </div>
                   <!-- /.card-header -->
                   <div class="card-body table-responsive p-0" style="height: 345px;">
-                     <table class="table table-head-fixed">
-                        <thead>
-                           <tr>
-                              <th>ID</th>
-                              <th class="text-nowrap">Thông tin</th>
-                              <th class="text-nowrap">Tổng tiền</th>
-                              <th class="text-nowrap">Acount</th>
-                              <th class="text-nowrap">Trạng thái</th>
-                              <th>Thời gian</th>
-                           </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($newTransaction as $transaction)
-                            <tr>
-                                <td>{{ $transaction->id }}</td>
-                                <td>
-                                    <ul>
-                                        <li>
-                                          <strong>Name:</strong>  {{ $transaction->name }}
-                                        </li>
-                                        <li>
-                                         <strong>Phone:</strong>   {{ $transaction->phone }}
-                                        </li>
-                                        <li>
-                                         <strong>Email:</strong>   {{ $transaction->email }}
-                                        </li>
-                                    </ul>
-                                </td>
-                                <td class="text-nowrap"><span class="tag tag-success">{{ number_format($transaction->total) }}</span></td>
-                                <td class="text-nowrap">{{ $transaction->user_id?'Thành viên':'Khách vãng lai' }}</td>
-                                <td class="text-nowrap status" data-url="{{ route('admin.transaction.loadNextStepStatus',['id'=>$transaction->id]) }}">
-                                   @include('admin.components.status',[
-                                        'dataStatus'=>$transaction,
-                                        'listStatus'=>$listStatus,
-                                   ])
-                                </td>
-                                <td class="text-nowrap">{{ $transaction->created_at }}</td>
-                             </tr>
+                        <ul class="list-news-home list-group">
+
+                            @foreach ($postNews as $item)
+                            <li class="list-group-item">
+                                <a href="{{route('admin.post.edit',['id'=>$item->id])}}"> <i class="fas fa-caret-right"></i> {{ $item->name }}</a>
+                            </li>
                             @endforeach
 
-                        </tbody>
-                     </table>
+                        </ul>
                   </div>
                   <!-- /.card-body -->
                </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-6">
                 <div class="card card-outline card-primary">
                     <div class="card-header">
-                       <h3 class="card-title">Tốp sản phẩm bán chạy</h3>
+                       <h3 class="card-title">10 sản phẩm thêm gần đây</h3>
                     </div>
-                    <!-- /.card-header -->
-                    <div class="card-body overflow-auto" style="height: 345px; ">
-                        @foreach ($topPayProduct as $item)
-                        <div class="media mt-3">
-                            <img src="{{ $item->avatar_path }}" class="align-self-center mr-3" style="width:60px">
-                            <div class="media-body">
-                              <p class="mb-1 font-weight-bold">
-                                  {{ $item->pay }} Lượt mua
-                                <span class="price float-right badge badge-danger">{{ number_format($item->price) }}</span>
-                              </p>
-                              <div>{{ $item->name }} </div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
+                    <div class="card-body table-responsive p-0" style="height: 345px;">
+                        <ul class="list-news-home list-group">
+
+                            @foreach ($productNews as $item)
+                            <li class="list-group-item">
+                                <a href="{{route('admin.product.edit',['id'=>$item->id])}}"> <i class="fas fa-caret-right"></i> {{ $item->name }}</a>
+                            </li>
+                            @endforeach
+
+                        </ul>
+                  </div>
                     <!-- /.card-body -->
                  </div>
             </div>
          </div>
-         <div class="row">
+
+         <div class="row" style="display: none">
             <div class="col-lg-6">
                <div class="card">
                   <div class="card-body">

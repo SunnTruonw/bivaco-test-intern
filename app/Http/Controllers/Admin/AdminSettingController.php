@@ -12,26 +12,47 @@ use App\Traits\StorageImageTrait;
 use App\Traits\DeleteRecordTrait;
 use App\Http\Requests\Admin\ValidateAddSetting;
 use App\Http\Requests\Admin\ValidateEditSetting;
-
+use Illuminate\Support\Facades\Storage;
 class AdminSettingController extends Controller
 {
     //
     use StorageImageTrait, DeleteRecordTrait;
     private $setting;
+    private $langConfig;
+    private $langDefault;
     public function __construct(Setting $setting)
     {
         $this->setting = $setting;
+        $this->langConfig = config('languages.supported');
+        $this->langDefault = config('languages.default');
     }
-    public function index()
+    public function index(Request $request)
     {
-       // $data = $this->setting->orderBy("created_at", "desc")->paginate(10);
-        $data = $this->setting->setAppends(['breadcrumb'])->where('parent_id',0)->orderBy("created_at", "desc")->paginate(15);
-        return view(
-            "admin.pages.setting.list",
+
+        $parentBr=null;
+        if($request->has('parent_id')){
+            $data = $this->setting->where('parent_id', $request->input('parent_id'))->orderBy("order")->orderBy("created_at", "desc")->paginate(15);
+            if($request->input('parent_id')){
+                $parentBr=$this->setting->find($request->input('parent_id'));
+            }
+        }else{
+            $data = $this->setting->where('parent_id',0)->orderBy("order")->orderBy("created_at", "desc")->paginate(15);
+        }
+
+        //  dd(config('excel_database.category_product.title'));
+        //  dd( view(
+        //      "admin.pages.categoryproduct.list",
+        //      [
+        //          'data' => $data
+        //      ]
+        //  )->renderSections()['content']);
+        return view("admin.pages.setting.list",
             [
-                'data' => $data
+                'data' => $data,
+                'parentBr'=>$parentBr,
             ]
         );
+
     }
     public function create(Request $request )
     {
@@ -53,29 +74,41 @@ class AdminSettingController extends Controller
         try {
             DB::beginTransaction();
             $dataSettingCreate = [
-                "name" => $request->input('name'),
-                "value" => $request->input('value'),
-                "slug" => $request->input('slug'),
-                "parent_id" => $request->input('parentId'),
-                "description" => $request->input('description'),
-                "active" => $request->input('active'),
+                "active" => $request->active,
+                'order'=>$request->order,
+                "parent_id" => $request->parent_id ? $request->parent_id : 0,
                 "admin_id" => auth()->guard('admin')->id()
             ];
-
-            $dataUploadImage = $this->storageTraitUpload($request, "image_path", "setting");
-            if (!empty($dataUploadImage)) {
-                $dataSettingCreate["image_path"] = $dataUploadImage["file_path"];
+            //   dd($dataSettingCreate);
+            $dataUploadAvatar = $this->storageTraitUpload($request, "image_path", "setting");
+            if (!empty($dataUploadAvatar)) {
+                $dataSettingCreate["image_path"] = $dataUploadAvatar["file_path"];
             }
-            // insert database in setting table
-            $this->setting->create($dataSettingCreate);
+            $setting = $this->setting->create($dataSettingCreate);
+            // dd($setting);
+            // insert data product lang
+            $dataSettingTranslation = [];
+            foreach ($this->langConfig as $key => $value) {
+                $itemSettingTranslation = [];
+                $itemSettingTranslation['name'] = $request->input('name_' . $key);
+                $itemSettingTranslation['slug'] = $request->input('slug_' . $key);
+                $itemSettingTranslation['description'] = $request->input('description_' . $key);
+                $itemSettingTranslation['value'] = $request->input('value_' . $key);
+                $itemSettingTranslation['language'] = $key;
+                $dataSettingTranslation[] = $itemSettingTranslation;
+            }
+            //  dd($setting->translations());
+            $settingTranslation =   $setting->translations()->createMany($dataSettingTranslation);
+            //  dd($settingTranslation);
             DB::commit();
-            return redirect()->route('admin.setting.create',['parent_id'=>$request->parentId])->with("alert", "Thêm setting thành công");
+            return redirect()->route("admin.setting.index", ['parent_id' => $request->parent_id])->with("alert", "Thêm nội dung thành công");
         } catch (\Exception $exception) {
-            //throw $th;
             DB::rollBack();
             Log::error('message' . $exception->getMessage() . 'line :' . $exception->getLine());
-            return redirect()->route('admin.setting.create',['parent_id'=>$request->parentId])->with("error", "Thêm setting không thành công");
+            return redirect()->route('admin.setting.index', ['parent_id' => $request->parent_id])->with("error", "Thêm nội dung không thành công");
         }
+
+
     }
     public function edit($id)
     {
@@ -92,27 +125,45 @@ class AdminSettingController extends Controller
         try {
             DB::beginTransaction();
             $dataSettingUpdate = [
-                "name" => $request->input('name'),
-                "value" => $request->input('value'),
-                "slug" => $request->input('slug'),
-                "description" => $request->input('description'),
-                "active" => $request->input('active'),
-                'parent_id' => $request->input('parentId')
+                "active" => $request->active,
+                'order'=>$request->order,
+                "parent_id" => $request->parent_id ? $request->parent_id : 0,
+                "admin_id" => auth()->guard('admin')->id()
             ];
+            //  dd($dataCategoryPostUpdate);
 
-            $dataUploadImage = $this->storageTraitUpload($request, "image_path", "setting");
-            if (!empty($dataUploadImage)) {
-                $dataSettingUpdate["image_path"] = $dataUploadImage["file_path"];
+            $dataUpdateAvatar = $this->storageTraitUpload($request, "image_path", "setting");
+            if (!empty($dataUpdateAvatar)) {
+                $path = $this->setting->find($id)->image_path;
+                if ($path) {
+                    Storage::delete($this->makePathDelete($path));
+                }
+                $dataSettingUpdate["image_path"] = $dataUpdateAvatar["file_path"];
             }
-            $this->setting->find($id)->update($dataSettingUpdate);
 
+            $this->setting->find($id)->update($dataSettingUpdate);
+            $setting = $this->setting->find($id);
+            $dataSettingTranslationUpdate = [];
+            foreach ($this->langConfig as $key => $value) {
+                $itemSettingTranslationUpdate = [];
+                $itemSettingTranslationUpdate['name'] = $request->input('name_' . $key);
+                $itemSettingTranslationUpdate['slug'] = $request->input('slug_' . $key);
+                $itemSettingTranslationUpdate['description'] = $request->input('description_' . $key);
+                $itemSettingTranslationUpdate['value'] = $request->input('value_' . $key);
+                $itemSettingTranslationUpdate['language'] = $key;
+                if($setting->translationsLanguage($key)->first()){
+                    $setting->translationsLanguage($key)->first()->update($itemSettingTranslationUpdate);
+                }else{
+                    $setting->translationsLanguage($key)->create($itemSettingTranslationUpdate);
+                }
+            }
             DB::commit();
-            return redirect()->route('admin.setting.index')->with("alert", "Sửa setting thành công");
+            return redirect()->route("admin.setting.index",['parent_id' => $request->parent_id])->with("alert", "Sửa nội dung thành công");
         } catch (\Exception $exception) {
             //throw $th;
             DB::rollBack();
             Log::error('message' . $exception->getMessage() . 'line :' . $exception->getLine());
-            return redirect()->route('admin.setting.create')->with("error", "Sửa setting thành công");
+            return redirect()->route('admin.setting.index',['parent_id' => $request->parent_id])->with("error", "Sửa nội dung không thành công");
         }
     }
     public function destroy($id)

@@ -7,11 +7,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use App\Traits\DeleteRecordTrait;
 use PDF;
+use App\Traits\PointTrait;
 
 class AdminTransactionController extends Controller
 {
     //
-    use DeleteRecordTrait;
+    use DeleteRecordTrait, PointTrait;
     private  $transaction;
     private $unit;
     private $listStatus;
@@ -29,7 +30,7 @@ class AdminTransactionController extends Controller
     {
         //thống kê giao dịch
         $transactionGroupByStatus = $this->transaction->select($this->transaction->raw('count(status) as total'), 'status')->groupBy('status')->get();
-        $totalTransaction = $this->transaction->all()->count();
+        $totalTransaction = $this->transaction->get()->count();
 
         $dataTransactionGroupByStatus = $this->listStatus;
         foreach ($transactionGroupByStatus as $item) {
@@ -39,14 +40,27 @@ class AdminTransactionController extends Controller
 
         $transactions = $this->transaction;
         $where = [];
+        $orWhere = null;
         if ($request->has('keyword') && $request->input('keyword')) {
-            $where[] = ['name', 'like', '%' . $request->input('keyword') . '%'];
+
+            $transactions = $transactions->where(function ($query) {
+                $query->where([
+                    ['name', 'like', '%' . request()->input('keyword') . '%']
+                ])->orWhere([
+                    ['code', 'like', '%' . request()->input('keyword') . '%']
+                ]);
+            });
+            // $where[] = ['name', 'like', '%' . $request->input('keyword') . '%'];
+            // $orWhere = ['code', 'like', '%' . $request->input('keyword') . '%'];
         }
         if ($request->has('status') && $request->input('status')) {
             $where[] = ['status', $request->input('status')];
         }
         if ($where) {
             $transactions = $transactions->where($where);
+        }
+        if ($orWhere) {
+            $transactions = $transactions->orWhere(...$orWhere);
         }
         $orderby = [];
         if ($request->has('order_with') && $request->input('order_with')) {
@@ -102,6 +116,8 @@ class AdminTransactionController extends Controller
         $id = $request->id;
         $transaction = $this->transaction->find($id);
         $status = $transaction->status;
+
+        $dataUpdate = [];
         switch ($status) {
             case -1:
                 break;
@@ -113,37 +129,14 @@ class AdminTransactionController extends Controller
                 break;
             case 3:
                 $status += 1;
-
-                   // thêm số điểm cây 20 lớp
-                   $i = 1;
-                   $user=$transaction->user;
-                   $userLoop = $user;
-                   while ($i <= 20) {
-                     //  dd($userLoop->parent2()->first());
-
-                       if ($userLoop->parent_id != 0) {
-
-                           $userLoop->parent()->first()->points()->create([
-                               'type' => $this->typePoint[2]['type'],
-                               'point' => (float)$this->rose[$i]['percent']*moneyToPoint($transaction->total)/100,
-                               'active' => 1,
-                               'userorigin_id' => $user->id,
-                           ]);
-                           $userLoop = $userLoop->parent()->first();
-                       } else {
-                           break;
-                       }
-                       $i++;
-                   }
                 break;
             case 4:
                 break;
             default:
                 break;
         }
-        $transaction->update([
-            'status' => $status,
-        ]);
+        $dataUpdate['status']=$status;
+        $transaction->update($dataUpdate);
         return response()->json([
             'code' => 200,
             'htmlStatus' => view('admin.components.status', [
@@ -169,6 +162,36 @@ class AdminTransactionController extends Controller
     {
         return $this->deleteTrait($this->transaction, $id);
     }
+
+    public function loadThanhtoan($id)
+    {
+        $transaction   =  $this->transaction->find($id);
+        $thanhtoan = $transaction->thanhtoan;
+
+        if ($thanhtoan) {
+            $thanhtoanUpdate = 0;
+        } else {
+            $thanhtoanUpdate = 1;
+        }
+        $updateResult =  $transaction->update([
+            'thanhtoan' => $thanhtoanUpdate,
+        ]);
+
+        $transaction   =  $this->transaction->find($id);
+        if ($updateResult) {
+            return response()->json([
+                "code" => 200,
+                "html" => view('admin.components.load-change-thanhtoan', ['data' => $transaction])->render(),
+                "message" => "success"
+            ], 200);
+        } else {
+            return response()->json([
+                "code" => 500,
+                "message" => "fail"
+            ], 500);
+        }
+    }
+
 
     public function show($id)
     {
